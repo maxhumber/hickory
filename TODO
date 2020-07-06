@@ -1,0 +1,17 @@
+list diagnostics to terminal
+--every= API finalize
+--every= parser
+Hook up logo to readme
+Finalize 3 API commands
+Documentation
+Test suite
+Publish to PyPI
+TravisCI
+Remove fire
+Remove rich
+Color terminal output
+Add spinners?
+Send to newsletters + vwd
+Turn into app
+Extra options to list output
+eventually add ubuntu support... probably not windows

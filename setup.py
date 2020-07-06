@@ -14,7 +14,7 @@ setup(
         "Intended Audience :: Developers" "Topic :: Office/Business :: Scheduling",
         "Topic :: Terminals",
     ],
-    keywords=["schedule", "cron", "crontab"],
+    keywords=["schedule", "scheduling", "cron", "crontab", "launchd"],
     url="https://github.com/maxhumber/hickory",
     author="Max Humber",
     author_email="max.humber@gmail.com",
