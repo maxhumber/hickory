@@ -20,12 +20,8 @@ setup(
     author_email="max.humber@gmail.com",
     license="MIT",
     py_modules=["hickory"],
-    install_requires=[
-        "fire",  # https://github.com/google/python-fire
-    ],
-    entry_points = {
-        'console_scripts': ['hickory=hickory:main'],
-    },
+    install_requires=["fire",],  # https://github.com/google/python-fire
+    entry_points={"console_scripts": ["hickory=hickory:main"],},
     python_requires=">=3.6",
     setup_requires=["setuptools>=38.6.0"],
 )
