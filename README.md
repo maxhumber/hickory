@@ -9,9 +9,9 @@
 </p>
 
 
-### Warning
+### 🚨 Warning
 
-🚨 UNDER ACTIVE DEVELOPMENT - API SUBJECT TO CHANGE 🚨
+API subject to change - package under active development!
 
 
 
@@ -19,7 +19,7 @@
 
 Command line tool for scheduling Python scripts on macOS (linux coming soon)...
 
-Name and logo come from the [rhyme](https://en.wikipedia.org/wiki/Hickory_Dickory_Dock).
+Name and logo inspired by the [rhyme](https://en.wikipedia.org/wiki/Hickory_Dickory_Dock).
 
 
 
@@ -42,6 +42,6 @@ Kill a running script:
 
 ### Install
 
-PyPI coming soon:
+PyPI coming soon, but for now:
 
 `pip install git+https://github.com/maxhumber/hickory`
