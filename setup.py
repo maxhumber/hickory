@@ -21,7 +21,6 @@ setup(
     license="MIT",
     py_modules=["hickory"],
     install_requires=[
-        "rich",  # https://github.com/willmcgugan/rich
         "fire",  # https://github.com/google/python-fire
     ],
     entry_points = {

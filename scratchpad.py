@@ -30,7 +30,10 @@ Weekday 	Integer 	Day of week (0..7, 0 and 7 being Sunday)
 Hour 	Integer 	Hour of day (0..23)
 Minute 	Integer 	Minute of hour (0..59)
 
+Likely API:
+
 Seconds
+10
 --every=10
 --every=10s
 --every=10sec

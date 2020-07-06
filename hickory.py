@@ -7,7 +7,7 @@ from pathlib import Path
 
 from fire import Fire  # to remove... eventually
 
-hickory_identifier = "hickory"
+hickory_identifier = "com.hickory"
 
 
 def run(command, output=True, silent=False):
@@ -20,7 +20,7 @@ def run(command, output=True, silent=False):
     subprocess.run(command, shell=True)
 
 
-def schedule(file_name, interval=10, run_at_load=True):
+def schedule(file_name, every=10, run_now=False):
     which_python = sys.executable
     working_directory = str(Path.cwd())
     home = str(Path.home())
@@ -29,8 +29,8 @@ def schedule(file_name, interval=10, run_at_load=True):
         "Label": f"{hickory_identifier}.{file_name}",  # use filename
         "WorkingDirectory": working_directory,  # add working directory
         "ProgramArguments": [which_python, file_name],
-        "StartInterval": interval,
-        "RunAtLoad": run_at_load,
+        "StartInterval": every,
+        "RunAtLoad": run_now,
         "StandardErrorPath": f"{working_directory}/hickory.log",
         "StandardOutPath": f"{working_directory}/hickory.log",
     }
