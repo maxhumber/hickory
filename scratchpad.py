@@ -17,8 +17,6 @@ str(Path.cwd())
 
 
 hickory list
-# launchctl list | grep local.hickory
-
 hickory stop/pause/kill
 hickory start/run/schedule
 hickory delete/remove

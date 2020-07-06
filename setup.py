@@ -5,12 +5,14 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="hickory",
-    version="0.1",
+    version="0.2",
     description="🕰 Hickory, dickory, dock. The mouse ran up the clock.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
-        "Development Status :: 1 - Planning"
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers" "Topic :: Office/Business :: Scheduling",
+        "Topic :: Terminals",
     ],
     keywords=["schedule", "cron", "crontab"],
     url="https://github.com/maxhumber/hickory",
@@ -18,6 +20,13 @@ setup(
     author_email="max.humber@gmail.com",
     license="MIT",
     py_modules=["hickory"],
+    install_requires=[
+        "rich",  # https://github.com/willmcgugan/rich
+        "fire",  # https://github.com/google/python-fire
+    ],
+    entry_points = {
+        'console_scripts': ['hickory=hickory:main'],
+    },
     python_requires=">=3.6",
     setup_requires=["setuptools>=38.6.0"],
 )
