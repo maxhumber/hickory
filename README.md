@@ -1,7 +1,7 @@
 ### hickory
 
 <h3 align="center">
-  <img src="https://raw.githubusercontent.com/maxhumber/hickory/master/logo/hickory.png" width="50px" alt="hickory">
+  <img src="https://raw.githubusercontent.com/maxhumber/hickory/master/logo/hickory.png" width="100px" alt="hickory">
 </h3>
 <p align="center">
   <a href="https://github.com/maxhumber/hickory"><img alt="GitHub" src="https://img.shields.io/github/license/maxhumber/hickory"></a>
