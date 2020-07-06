@@ -1,6 +1,12 @@
 --every= parser
 put into a folder
 list diagnostics to terminal
+
+TODO: would be nice to see number of times triggered, when it was started, uptime, if it's still running, id?, script path? maybe use rich...
+
+See repeat rule?
+
+
 Finalize 3 API commands
 Documentation
 Test suite
