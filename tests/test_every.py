@@ -1,0 +1,16 @@
+intervals = [
+    10,
+    "10",
+    "10s",
+    "10sec",
+    "10secs",
+    "10seconds",
+    "30m",
+    "30min",
+    "30mins",
+    "30minutes",
+    "2h",
+    "2hr",
+    "2hour",
+    "2hours",
+]

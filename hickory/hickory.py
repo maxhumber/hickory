@@ -41,12 +41,14 @@ def schedule(file_name, every=10, run_now=False):
 
 def parse_gui_infodump(info):
     path, stdout, stderr = re.findall("path = (.*?)\n", info)
-    name = (
+    plist_name = (
         path.split("/")[-1].replace(f"{HICKORY_SERVICE}.", "").replace(".plist", "")
     )
     return {
+        "plist_name": plist_name,
+        "hid": plist_name.split('.')[0],
+        "script": '.'.join(plist_name.split('.')[1:]),
         # need
-        "name": name,
         "run_interval": re.findall("run interval = (.*?)\n", info)[0],
         "runs": re.findall("runs = (.*?)\n", info)[0],
         "state": re.findall("state = (.*?)\n", info)[0],
@@ -70,9 +72,21 @@ def all_info():
         infodump = run(f"launchctl print gui/{uid}/{script}")
         info = parse_gui_infodump(infodump)
         infos.append(info)
-    print(json.dumps(infos, indent=2))
+    # return json.dumps(infos, indent=2)
+    return infos
 
-def info():
+
+def small_info():
+    # HID   FILE     RUNS   STATE    INTERVAL
+    # 3300  bar.py   17     waiting  10 seconds
+    infos = all_info()
+    terminal_string = 'hid - script - runs - state - interval'
+    for i in infos:
+        s = f"\n{i['hid']} - {i['script']} - {i['runs']} - {i['state']} - {i['run_interval']}"
+        terminal_string = terminal_string + s
+    return terminal_string
+
+def list():
     return run(f"launchctl list | grep {HICKORY_SERVICE}")
 
 
@@ -92,6 +106,7 @@ def main():
         "schedule": schedule,
         "list": list,
         "info": all_info,
+        "small_info": small_info,
         "kill": kill
     })
 

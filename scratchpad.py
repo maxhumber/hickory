@@ -1,114 +1,15 @@
-  {
-    "name": "bar.py",
-    "run_interval": "10 seconds",
-    "runs": "17",
-    "state": "waiting",
-    "script_path": "/Users/max/Library/LaunchAgents/hickory.bar.py.plist",
-    "last_exit_code": "0",
-    "program": "/Users/max/anaconda3/bin/python",
-    "working_directory": "/Users/max/Repos/hickory",
-    "environment_path": "/usr/bin:/bin:/usr/sbin:/sbin",
-    "stdout": "/Users/max/Repos/hickory/hickory.log",
-    "stderr": "/Users/max/Repos/hickory/hickory.log"
-}
+# BASIC API
+hickory schedule foo.py 10
+hickory schedule foo.py --every=10
 
-HID   FILE     RUNS   STATE    INTERVAL
-3300  bar.py   17     waiting  10 seconds
+hickory schedule info
+hickory schedule info 6s330d
+hickory schedule info foo.py
 
+hickory schedule kill 6s330d
+hickory schedule kill foo.py
 
-Should there be an id?
-
-schedule > info > kill
-
-info/status
-foo.py - waiting  - 10 runs  - every: 30 minutes
-bar.py - runnning - 15 runs  - every: Monday @ 8:30
-baz.py - error    - 140 runs - every: Weekday @ 9:30am
-
-info foo.py
-status foo.py
-
-hickory schedule foo.py --every=30m
-hickory info
-hickory info foo.py
-hickory kill foo.py
-
-
-schedule > status > kill
-schedule > info > kill
-add > status > remove
-
-SCHEDULE
---------
-schedule
-add
-start
-load
-create
-bootstrap
-enable
-
-
-LIST
-----
-status
-info
-inspect
-list
-enumerate
-running
-view
-examine
-sitrep
-report
-
-
-KILL
-----
-kill
-remove
-rm
-terminate
-bootout
-drop
-quit
-cancel
-disable
-stop
-nix
-nullify
-halt
-delete
-remove
-cease
-pause
-eliminate
-destroy
-
-
-
-
-import os
-import plistlib
-import subprocess
-from sys import platform
-
-import sys
-print(sys.executable)
-
-os.path.abspath('')
-
-str(Path.cwd())
-#
-# import platform
-# platform.python_version()
-# platform.mac_ver()
-# platform.system()
-
-
-
-
-# start calendar interval
+## Calendar Intervals for launchd
 
 Month 	Integer 	Month of year (1..12, 1 being January)
 Day 	Integer 	Day of month (1..31)
@@ -116,7 +17,7 @@ Weekday 	Integer 	Day of week (0..7, 0 and 7 being Sunday)
 Hour 	Integer 	Hour of day (0..23)
 Minute 	Integer 	Minute of hour (0..59)
 
-Likely API:
+## every api
 
 Seconds
 10
@@ -134,61 +35,46 @@ Minutes
 
 Hours
 --every=2h
+--every=2hr
 --every=2hour
 --every=2hours
 
 Day (will run every day)
+--every=day@4:00
+--every=day@4:00am
+--every=day@4:00pm
+--every=day@16:00
 --every=@4:00
---every=@4:00am
---every=@4:00pm
---every=@16:00
+--every=@4
 
-Weekday
+Weekday (MTWThF)
+--every=weekday@4:00
+
+Specific Day
 --every=mon@4:00
 --every=monday@4:00
 --every=tues@4:000
 
-Every Weekday
---every=weekday@9:00
+Specific Calendar Day
+--every=1@8:30
+--every=1st@8:30
+--every=2@8:30
+--every=2nd@8:30
+--every=3@8:30
+--every=3rd@8:30
+--every=4@8:30
+--every=4th@8:30
+--every=13@8:30
 
+Last Day of Month
+--every=eom@8:30
 
-—every=monday@8:30
-—every=1st,2nd,3rd,15th@9:30,5:30pm
-—every=30min
+Multiple Intervals
+--every=15,eom@9:30pm
+--every=weekday@9:00am,4:30pm
+--every=5,15,20@9:30,5:30pm
 
-
-—every=*@00:00:00
-—every=@10
-—every=::1
-—every=:2:
-
-
---day=1,2,3
---weekday=monday,1,tuesday,wednesday
---every=monday,tuesday,
---every=mon,tuesday
---every=@month:4
---every=@month:4,5
---every=@hour --at=*
---every=60:minutes
---every=2:hours
---every=weekday
---at=4:30pm
---at=4:30am
---at=4:30
---at=16:30
-
-###
-
-every minute
-every 10 minutes
-every 30 seconds
-every 2 hours
-
-every monday
-every monday,tuesday
-every weekday at 9:00am
-
+# Fooling around with codes
 
  1009  launchctl dumpstate | grep hickory
  1010  dtrace | grep hickory
@@ -207,13 +93,3 @@ every weekday at 9:00am
  1023  launchctl print gui/501 | grep hickory
  1024  launchctl print gui/501/hickory.tryme.py
  1024  launchctl print gui/501/hickory.tryme.py | grep state
-
-
-
-6000 / 60 / 60
-
-import datetime
-str(datetime.timedelta(seconds=6000))
-
-
-#

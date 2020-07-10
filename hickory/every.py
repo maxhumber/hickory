@@ -1,41 +1,29 @@
 import plistlib
 import re
+from itertools import product
 
 # plist dump
 d = {"StartCalendarInterval": {"Hour": int(1), "Minute": int(0)}}
-
 print(plistlib.dumps(d).decode())
+############
 
-# timestamps
-
-every = [
-    "@4:00",
-    "@04:00",
-    "@4:00am",
-    "@4:00pm",
-    "@16:00",
-]
-
-
-def parse_timestamp(timestamp):
-    hour, minute = timestamp.split(":")
-    if "am" in minute:
-        minute = minute[:-2]
-    if "pm" in minute:
-        minute = minute[:-2]
-        hour = int(hour) + 12
-    return {"Hour": int(hour), "Minute": int(minute)}
+def interval_to_seconds(interval):
+    interval = str(interval)
+    l = re.findall(r"[A-Za-z]+|\d+", interval)
+    if len(l) == 1:
+        seconds = int(l[0])
+    elif l[1] in ["s", "sec", "secs", "second", "seconds"]:
+        seconds = int(l[0])
+    elif l[1] in ["m", "min", "mins", "minute", "minutes"]:
+        seconds = int(l[0]) * 60
+    elif l[1] in ["h", "hr", "hour", "hours"]:
+        seconds = int(l[0]) * 60 * 60
+    else:
+        raise Exception("Not an Interval")
+    return seconds
 
 
-for e in every:
-    day, timestamp = e.split("@")
-    r = parse_timestamp(timestamp)
-    print(e, r)
-
-# days
-
-
-def parse_day(day):
+def day_to_number(day):
     if day in ["m", "mon", "monday"]:
         day_number = 1
     elif day in ["t", "tue", "tues", "tuesday"]:
@@ -51,56 +39,49 @@ def parse_day(day):
     elif day in ["su", "sun", "sunday"]:
         day_number = 7
     else:
-        raise Error("Not a day")
-    return {"Weekday": int(day_number)}
+        raise Exception("Not a day")
+    return day_number
 
 
-every = ["mon@4:00", "monday@4:00pm", "t@16:00"]
-
-for e in every:
-    day, timestamp = e.split("@")
-    r = parse_day(day)
-    print(e, r)
-
-
-## every intervals
-
-every = [
-    10,
-    "10",
-    "10s",
-    "10sec",
-    "10secs",
-    "10seconds",
-    "30m",
-    "30min",
-    "30mins",
-    "30minutes",
-    "2h",
-    "2hour",
-    "2hours",
-]
+def timestamp_to_hour_minute(timestamp):
+    hour, minute = timestamp.split(":")
+    if "am" in minute:
+        minute = minute[:-2]
+    if "pm" in minute:
+        minute = minute[:-2]
+        hour = int(hour) + 12
+    return int(hour), int(minute)
 
 
-def parse_interval(interval):
-    interval = str(interval)
-    r = re.findall(r"[A-Za-z]+|\d+", interval)
-    if len(r) == 1:
-        seconds = int(r[0])
-    elif r[1] in ["s", "sec", "secs", "second", "seconds"]:
-        seconds = int(r[0])
-    elif r[1] in ["m", "min", "mins", "minute", "minutes"]:
-        seconds = int(r[0]) * 60
-    elif r[1] in ["h", "hour", "hours"]:
-        seconds = int(r[0]) * 60 * 60
+def every(string):
+    s = str(string)
+
+    if '@' not in s:
+        seconds = interval_to_seconds(s)
+        return {"StartInterval": seconds}
+
+    days, timestamps = s.split("@")
+    days, timestamps = days.split(','), timestamps.split(',')
+    combos = product(days, timestamps)
+
+    blocks = []
+    for day, timestamp in combos:
+        block = {}
+        if day:
+            block['Weekday'] = day_to_number(day)
+        hour, minute = timestamp_to_hour_minute(timestamp)
+        block['Hour'] = hour
+        block['Minute'] = minute
+        blocks.append(block)
+
+    if len(blocks) > 1:
+        return {'StartCalendarInterval': blocks}
     else:
-        raise Error("Not an interval")
-    return {"StartInterval": seconds}
+        return {'StartCalendarInterval': blocks[0]}
 
+inputs = ["10hr", "10", "m,t@5:30", '@4:30']
 
-for e in every:
-    seconds = parse_interval(e)
-    print(e, seconds)
-
-
-#
+for i in inputs:
+    d = every(i)
+    # print(d)
+    print(plistlib.dumps(d).decode())
