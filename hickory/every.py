@@ -15,6 +15,10 @@ class InvalidMonthDay(Exception):
     pass
 
 
+class InvalidTime(Exception):
+    pass
+
+
 def interval_to_lower(interval):
     return str(interval).lower()
 
@@ -77,8 +81,61 @@ def day_to_number_in_month(day):
     else:
         raise InvalidMonthDay(day)
 
+#TODO below
+
+times = ['20', '8', '8am', "8:30", '8:30am', '8:30pm', '20:30']
+
+def to_hour_minute(t):
+    # t = '8:30pm'
+    retime = re.findall(r"[A-Za-z]+|\d+", t)
+    hour = int(retime[0])
+    minute = 0
+    if len(retime) == 2:
+        if retime[1] == 'pm':
+            hour += 12
+        elif retime[1] == 'am':
+            pass
+        else:
+            minute = int(retime[1])
+    if len(retime) == 3:
+        minute = int(retime[1])
+        if retime[2] == 'am':
+            pass
+        elif retime[2] == 'pm':
+            hour += 12
+        else:
+            raise InvalidTime(t)
+    if not (0 <= hour <= 23) and (0 <= minute <= 59):
+        raise InvalidTime(t)
+    return hour, minute
+
+
+for t in times:
+    print(t, '->', to_hour_minute(t))
+
+    c = re.findall(r"[A-Za-z]+|\d+", t)
+    print(c)
+    print("->", t.split(":"))
+    print(c, "->", t.split(":"))
+
+t = '8am'
+if not ':' in t:
+    parsed = re.findall(r"[A-Za-z]+|\d+", t)
+hour_minute = t.split(':')
+hour = hour_minute[0]
+
+
+hour = parsed[0]
+
+[hour, minute, abrv]
+
+def time_to_hour_minute_abrv():
+    pass
+
+
 
 def time_to_hour_minute(t):
+    t = '8'
     hour, minute = t.split(":")
     if "am" in minute:
         minute = minute[:-2]
@@ -88,6 +145,14 @@ def time_to_hour_minute(t):
     return int(hour), int(minute)
 
 
+    # print(time_to_hour_minute(t))
+
+def generate_day_timestamp_combos(s):
+    days, timestamps = s.split("@")
+    days, timestamps = days.split(","), timestamps.split(",")
+    combos = product(days, timestamps)
+    return combos
+
 def every(interval):
     s = interval_to_lower(interval)
 
@@ -95,12 +160,9 @@ def every(interval):
         raise InvalidInterval(s)
 
     if "@" not in s:
-        seconds = interval_to_seconds(s)
-        return {"StartInterval": seconds}
+        return {"StartInterval": interval_to_seconds(s)}
 
-    days, timestamps = s.split("@")
-    days, timestamps = days.split(","), timestamps.split(",")
-    combos = product(days, timestamps)
+    combos = generate_day_timestamp_combos(s)
 
     blocks = []
     for day, timestamp in combos:

@@ -103,7 +103,7 @@ Day (will run every day)
 --every=@4:00
 --every=@4
 
-Weekday (MTWThF)
+++++ Weekday (MTWThF)
 --every=weekday@4:00
 
 Specific Day
@@ -122,7 +122,7 @@ Specific Calendar Day
 --every=4th@8:30
 --every=13@8:30
 
-Last Day of Month
+++++ Last Day of Month
 --every=eom@8:30
 
 Multiple Intervals
