@@ -1,21 +1,20 @@
+# priority
 --every= parser
 put into a folder
-list diagnostics to terminal
+list to info
+extra info
 
-TODO: would be nice to see number of times triggered, when it was started, uptime, if it's still running, id?, script path? maybe use rich...
-
-See repeat rule?
-
-
-Finalize 3 API commands
-Documentation
-Test suite
+# after
+Documentation / helpers at command line
+Tests
 Publish to PyPI
-TravisCI
+TravisCI osx image
+
+# nice to have
 Remove fire
 Color terminal output
-Add spinners?
 Send to newsletters + vwd
-Turn into app
-Extra options to list output
-eventually add ubuntu support... probably not windows
+
+# later
+GUI app
+add ubuntu/linux support... (systemd?)

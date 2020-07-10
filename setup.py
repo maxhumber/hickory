@@ -5,12 +5,12 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="hickory",
-    version="0.2",
+    version="0.5",
     description="🕰 Hickory, dickory, dock. The mouse ran up the clock.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers" "Topic :: Office/Business :: Scheduling",
         "Topic :: Terminals",
     ],
@@ -19,9 +19,9 @@ setup(
     author="Max Humber",
     author_email="max.humber@gmail.com",
     license="MIT",
-    py_modules=["hickory"],
-    install_requires=["fire",],  # https://github.com/google/python-fire
-    entry_points={"console_scripts": ["hickory=hickory:main"],},
+    packages=["hickory"],
+    install_requires=["fire"],
+    entry_points={"console_scripts": ["hickory=hickory.hickory:main"]},
     python_requires=">=3.6",
     setup_requires=["setuptools>=38.6.0"],
 )

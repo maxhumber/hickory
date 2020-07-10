@@ -1,3 +1,93 @@
+  {
+    "name": "bar.py",
+    "run_interval": "10 seconds",
+    "runs": "17",
+    "state": "waiting",
+    "script_path": "/Users/max/Library/LaunchAgents/hickory.bar.py.plist",
+    "last_exit_code": "0",
+    "program": "/Users/max/anaconda3/bin/python",
+    "working_directory": "/Users/max/Repos/hickory",
+    "environment_path": "/usr/bin:/bin:/usr/sbin:/sbin",
+    "stdout": "/Users/max/Repos/hickory/hickory.log",
+    "stderr": "/Users/max/Repos/hickory/hickory.log"
+}
+
+HID   FILE     RUNS   STATE    INTERVAL
+3300  bar.py   17     waiting  10 seconds
+
+
+Should there be an id?
+
+schedule > info > kill
+
+info/status
+foo.py - waiting  - 10 runs  - every: 30 minutes
+bar.py - runnning - 15 runs  - every: Monday @ 8:30
+baz.py - error    - 140 runs - every: Weekday @ 9:30am
+
+info foo.py
+status foo.py
+
+hickory schedule foo.py --every=30m
+hickory info
+hickory info foo.py
+hickory kill foo.py
+
+
+schedule > status > kill
+schedule > info > kill
+add > status > remove
+
+SCHEDULE
+--------
+schedule
+add
+start
+load
+create
+bootstrap
+enable
+
+
+LIST
+----
+status
+info
+inspect
+list
+enumerate
+running
+view
+examine
+sitrep
+report
+
+
+KILL
+----
+kill
+remove
+rm
+terminate
+bootout
+drop
+quit
+cancel
+disable
+stop
+nix
+nullify
+halt
+delete
+remove
+cease
+pause
+eliminate
+destroy
+
+
+
+
 import os
 import plistlib
 import subprocess
@@ -16,11 +106,7 @@ str(Path.cwd())
 # platform.system()
 
 
-hickory list
-hickory stop/pause/kill
-hickory start/run/schedule
-hickory delete/remove
-hickory schedule demo.py --every 86400
+
 
 # start calendar interval
 
