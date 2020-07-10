@@ -6,20 +6,26 @@ import re
 class InvalidInterval(Exception):
     pass
 
+
 class InvalidWeekDay(Exception):
     pass
+
 
 class InvalidMonthDay(Exception):
     pass
 
+
 def interval_to_lower(interval):
     return str(interval).lower()
+
 
 def strip_number(s):
     return re.sub("[^0-9]", "", s)
 
+
 def contains_number(s):
     return bool(strip_number(s))
+
 
 def interval_to_components(interval):
     c = re.findall(r"[A-Za-z]+|\d+", interval)
@@ -27,8 +33,9 @@ def interval_to_components(interval):
         value = int(c[0])
     except ValueError:
         raise InvalidInterval(interval) from None
-    unit = 's' if len(c) == 1 else c[1]
+    unit = "s" if len(c) == 1 else c[1]
     return value, unit
+
 
 def interval_to_seconds(interval):
     value, unit = interval_to_components(interval)
@@ -41,6 +48,7 @@ def interval_to_seconds(interval):
     else:
         raise InvalidInterval(interval) from None
     return seconds
+
 
 def day_to_number_in_week(day):
     if day in ["m", "mon", "monday"]:
@@ -61,12 +69,14 @@ def day_to_number_in_week(day):
         raise InvalidWeekDay(day)
     return day_number
 
+
 def day_to_number_in_month(day):
     number = int(strip_number(day))
     if 1 <= number <= 31:
         return number
     else:
         raise InvalidMonthDay(day)
+
 
 def time_to_hour_minute(t):
     hour, minute = t.split(":")
@@ -84,12 +94,12 @@ def every(interval):
     if not contains_number(s):
         raise InvalidInterval(s)
 
-    if '@' not in s:
+    if "@" not in s:
         seconds = interval_to_seconds(s)
         return {"StartInterval": seconds}
 
     days, timestamps = s.split("@")
-    days, timestamps = days.split(','), timestamps.split(',')
+    days, timestamps = days.split(","), timestamps.split(",")
     combos = product(days, timestamps)
 
     blocks = []
@@ -97,18 +107,19 @@ def every(interval):
         block = {}
         if day:
             try:
-                block['Day'] = day_to_number_in_month(day)
+                block["Day"] = day_to_number_in_month(day)
             except ValueError:
-                block['Weekday'] = day_to_number_in_week(day)
+                block["Weekday"] = day_to_number_in_week(day)
         hour, minute = timestamp_to_hour_minute(timestamp)
-        block['Hour'] = hour
-        block['Minute'] = minute
+        block["Hour"] = hour
+        block["Minute"] = minute
         blocks.append(block)
 
     if len(blocks) > 1:
-        return {'StartCalendarInterval': blocks}
+        return {"StartCalendarInterval": blocks}
     else:
-        return {'StartCalendarInterval': blocks[0]}
+        return {"StartCalendarInterval": blocks[0]}
+
 
 #
 # inputs = ['lol', "1st,2nd,3rd@2:30", "m,t@5:30", '@4:30']

@@ -1,4 +1,4 @@
-import json # for pretty print
+import json  # for pretty print
 from pathlib import Path
 import plistlib
 import re
@@ -14,11 +14,12 @@ except ImportError:
 
 HICKORY_SERVICE = "hickory"
 
+
 def schedule(file_name, every=10, run_now=False):
     which_python = sys.executable
     working_directory = str(Path.cwd())
     home = str(Path.home())
-    hid = uuid4().hex[:6] # hickory_id
+    hid = uuid4().hex[:6]  # hickory_id
     hickory_name = f"{HICKORY_SERVICE}.{hid}.{file_name}"
     # create the plist file
     d = {
@@ -34,9 +35,7 @@ def schedule(file_name, every=10, run_now=False):
     with open(f"{home}/Library/LaunchAgents/{hickory_name}.plist", "wb") as f:
         plistlib.dump(d, f)
     # schedule
-    run(
-        f"launchctl load {home}/Library/LaunchAgents/{hickory_name}.plist"
-    )
+    run(f"launchctl load {home}/Library/LaunchAgents/{hickory_name}.plist")
 
 
 def parse_gui_infodump(info):
@@ -46,8 +45,8 @@ def parse_gui_infodump(info):
     )
     return {
         "plist_name": plist_name,
-        "hid": plist_name.split('.')[0],
-        "script": '.'.join(plist_name.split('.')[1:]),
+        "hid": plist_name.split(".")[0],
+        "script": ".".join(plist_name.split(".")[1:]),
         # need
         "run_interval": re.findall("run interval = (.*?)\n", info)[0],
         "runs": re.findall("runs = (.*?)\n", info)[0],
@@ -62,6 +61,7 @@ def parse_gui_infodump(info):
         "stdout": stdout,
         "stderr": stderr,
     }
+
 
 def all_info():
     uid = run("id -u")
@@ -80,11 +80,12 @@ def small_info():
     # HID   FILE     RUNS   STATE    INTERVAL
     # 3300  bar.py   17     waiting  10 seconds
     infos = all_info()
-    terminal_string = 'hid - script - runs - state - interval'
+    terminal_string = "hid - script - runs - state - interval"
     for i in infos:
         s = f"\n{i['hid']} - {i['script']} - {i['runs']} - {i['state']} - {i['run_interval']}"
         terminal_string = terminal_string + s
     return terminal_string
+
 
 def list():
     return run(f"launchctl list | grep {HICKORY_SERVICE}")
@@ -102,13 +103,15 @@ def kill(id):
 
 
 def main():
-    Fire({
-        "schedule": schedule,
-        "list": list,
-        "info": all_info,
-        "small_info": small_info,
-        "kill": kill
-    })
+    Fire(
+        {
+            "schedule": schedule,
+            "list": list,
+            "info": all_info,
+            "small_info": small_info,
+            "kill": kill,
+        }
+    )
 
 
 if __name__ == "__main__":
