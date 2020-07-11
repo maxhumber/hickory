@@ -80,16 +80,16 @@ hickory kill foo.py
 
 ### `every` Examples
 
-English to schedule input:
+Repeat to schedule input:
 
-| English                                                      |                          |
-| ------------------------------------------------------------ | ------------------------ |
-| Repeat every ten minutes                                     | `--every=10minutes`      |
-| Repeat every day at 10:10 AM                                 | `--every=@10:10`         |
-| Repeat every Monday at 10:10 AM                              | `--every=monday@10:10am` |
-| Repeat every 10th day of the month at 10:10 AM               | `--every=10th@10:10am`   |
-| Repeat every last day of the month at 10:10 AM               | `--every=eom@10:10am`    |
-| Repeat every 10th and last day of the month at 10 AM and 10 PM | `--every=10,eom@10,10pm` |
+| Repeat                                                  |                          |
+| ------------------------------------------------------- | ------------------------ |
+| Every ten minutes                                       | `--every=10minutes`      |
+| Every day at 10:10 AM                                   | `--every=@10:10`         |
+| Every Monday at 10:10 AM                                | `--every=monday@10:10am` |
+| Every 10th day of the month at 10:10 AM                 | `--every=10th@10:10am`   |
+| Every last day of the month at 10:10 AM                 | `--every=eom@10:10am`    |
+| Every 10th and last day of the month at 10 AM and 10 PM | `--every=10,eom@10,10pm` |
 
 
 

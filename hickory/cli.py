@@ -8,11 +8,11 @@ from uuid import uuid4
 from fire import Fire
 
 try:
-    from .every import every as every_to_dict
+    from .every import every as every_to_dict, HickoryError
     from .run import run
 except ImportError:
     # FOR TESTING
-    from hickory.every import every as every_to_dict
+    from hickory.every import every as every_to_dict, HickoryError
     from hickory.run import run
 
 
@@ -46,6 +46,8 @@ def schedule(script, every):
     '''
     DOCTODO // schedule the actual script!
     '''
+    if not Path(script).exists():
+        raise FileNotFoundError(script)
     launchd_dict = generate_launchd_dict(script, every)
     path = f"{LAUNCHD_PATH}/{launchd_dict['Label']}.plist"
     with open(f"{path}", "wb") as f:
@@ -53,8 +55,33 @@ def schedule(script, every):
     run(f"launchctl load {path}")
 
 
-def status():
-    pass
+def kill(id_or_script):
+    '''
+    DOCTODO // kill (stop and delete) the scheduler for script name or id
+    '''
+    for file in Path(LAUNCHD_PATH).glob(f'{HICKORY_SERVICE}*{id_or_script}*'):
+        run(f"launchctl unload {file}")
+        run(f"rm {file}")
+
+
+####
+
+uid = run("id -u")
+running = run(f"launchctl list | grep {HICKORY_SERVICE}")
+scripts = [script.split("\t")[-1] for script in running.split("\n")]
+infos = []
+script = scripts[0]
+for script in scripts:
+    infodump = run(f"launchctl print gui/{uid}/{script}")
+    print(infodump)
+    info = parse_gui_infodump(infodump)
+    infos.append(info)
+# return json.dumps(infos, indent=2)
+return infos
+
+
+
+
 
 def parse_gui_infodump(info):
     path, stdout, stderr = re.findall("path = (.*?)\n", info)
@@ -80,30 +107,17 @@ def parse_gui_infodump(info):
         "stderr": stderr,
     }
 
-# script = 'hickory.d2d800.foo.py'
-# script
-#
-# output = run(f"launchctl print gui/{uid}/{script}")
-# print(output)
-#
-# print(re.findall(r"^.*descriptor(?:[\s\S]*)^.*\}", output, re.M)[0])
 
-def all_info():
-    uid = run("id -u")
-    running = run(f"launchctl list | grep {HICKORY_SERVICE}")
-    scripts = [script.split("\t")[-1] for script in running.split("\n")]
-    infos = []
-    for script in scripts:
-        infodump = run(f"launchctl print gui/{uid}/{script}")
-        info = parse_gui_infodump(infodump)
-        infos.append(info)
-    # return json.dumps(infos, indent=2)
-    return infos
+for file in Path(LAUNCHD_PATH).glob(f'*{HICKORY_SERVICE}*'):
+    print(file)
 
 
-def small_info():
-    # HID   FILE     RUNS   STATE    INTERVAL
-    # 3300  bar.py   17     waiting  10 seconds
+
+
+
+def status():
+        # HID   FILE     RUNS   STATE    INTERVAL
+        # 3300  bar.py   17     waiting  10 seconds
     infos = all_info()
     terminal_string = "hid - script - runs - state - interval"
     for i in infos:
@@ -116,22 +130,12 @@ def list():
     return run(f"launchctl list | grep {HICKORY_SERVICE}")
 
 
-def kill(id_or_script):
-    '''
-    DOCTODO // kill (stop and delete) the scheduler for script name or id
-    '''
-    for file in Path(LAUNCHD_PATH).glob(f'{HICKORY_SERVICE}*{id_or_script}*'):
-        run(f"launchctl unload {file}")
-        run(f"rm {file}")
-
-
 def main():
     Fire(
         {
             "schedule": schedule,
             "list": list,
-            "info": all_info,
-            "small_info": small_info,
+            "status": status,
             "kill": kill,
         }
     )

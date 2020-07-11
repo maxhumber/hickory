@@ -166,9 +166,3 @@ def every(interval):
         return start_interval(interval)
     else:
         return start_calendar_interval(interval)
-
-
-# # plist dump
-# d = {"StartCalendarInterval": {"Hour": int(1), "Minute": int(0)}}
-# print(plistlib.dumps(d).decode())
-# ############
