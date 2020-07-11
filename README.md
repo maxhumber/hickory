@@ -11,11 +11,11 @@
 
 ### About
 
-`hickory` is a command line tool for scheduling Python scripts. It is not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler. But it is perfect for most *stand-alone* jobs! 
+`hickory` is a command line tool for scheduling Python scripts. It is not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler. But it is perfect for most *stand-alone* jobs!
 
 
 
-### Support 
+### Support
 
 `hickory` currently supports:
 
@@ -84,86 +84,71 @@ hickory kill foo.py
 
 Interval:
 
-> `--every=10mins` • repeat every 10 minutes
-
-| Seconds     | Minutes     | Hours     |
-| ----------- | ----------- | --------- |
-| `10`        |             |           |
-| `10s`       | `10m`       | `10h`     |
-| `10sec`     | `10min`     | `10hr`    |
-| `10secs`    | `10mins`    | `10hrs`   |
-| `10seconds` | `10minutes` | `10hours` |
+| Interval   | Input                                       |
+| ---------- | ------------------------------------------- |
+|            | **`--every=10mins`**                        |
+| 10 seconds | `10`, `10s`, `10sec`, `10secs`, `10seconds` |
+| 10 minutes | `10m`, `10min`, `10mins`, `10minutes`       |
+| 10 hours   | `10h`, `10hr`, `10hrs`, `10hours`           |
 
 
 
 Timestamp:
 
-> `--every=@10:10am` • repeat every day at 10:10 AM
-
-| Input      | Time     |
-| ---------- | -------- |
-| `@10`      | 10:00 AM |
-| `@22`      | 10:00 PM |
-| `@10am`    | 10:00 AM |
-| `@10pm`    | 10:00 PM |
-| `@10:10`   | 10:10 AM |
-| `@22:10`   | 10:10 PM |
-| `@10:10am` | 10:10 AM |
-| `@10:10pm` | 10:10 PM |
+| Time     | Input                  |
+| -------- | ---------------------- |
+|          | **`--every=@10:10am`** |
+| 10:00 AM | `@10`, `@10am`         |
+| 10:00 PM | `@22`, `@10pm`         |
+| 10:10 AM | `@10:10`, `@10:10am`   |
+| 10:10 PM | `@22:10`, `@10:10pm`   |
 
 
 
 Weekday:
 
-> `--every=monday@10:10am` • repeat every Monday at 10:10 AM
-
-| Day       | Input    |
-| ---------------- | --------------------------------- |
-| Monday           | `m@`, `mon@`, `monday@`           |
-| Tuesday          | `t@`, `tue@`, `tues@`, `tuesday@` |
-| Wednesday        | `w@`, `wed@`, `weds@`, `wednesday@`       |
-| Thursday         | `th@`, `thur@`, `thurs@`, `thursday@`     |
-| Friday           | `f@`, `fri@`, `friday@`                 |
-| Saturday         | `s@`, `sat@`, `saturday@`               |
-| Sunday           | `su@`, `sun@`, `sunday@`               |
+| Day       | Input                                 |
+| --------- | ------------------------------------- |
+|           | **`--every=monday@10:10am`**          |
+| Monday    | `m@`, `mon@`, `monday@`               |
+| Tuesday   | `t@`, `tue@`, `tues@`, `tuesday@`     |
+| Wednesday | `w@`, `wed@`, `weds@`, `wednesday@`   |
+| Thursday  | `th@`, `thur@`, `thurs@`, `thursday@` |
+| Friday    | `f@`, `fri@`, `friday@`               |
+| Saturday  | `s@`, `sat@`, `saturday@`             |
+| Sunday    | `su@`, `sun@`, `sunday@`              |
 
 
 
 Calendar Day:
 
-> `--every=10th@10:10am` • repeat every 10th day of the month at 10:10 AM
-
-| Day  | Input          |
-| ---- | -------------- |
-| 1st  | `1@`, `1st@`   |
-| 2nd  | `2@`, `2nd@`   |
-| 3rd  | `3@`, `3rd@`   |
-| 4th  | `4@`, `4th@`   |
-| 15th | `15@`, `15th@` |
-| 31st | `31@`, `31st@` |
+| Day  | Input                      |
+| ---- | -------------------------- |
+|      | **`--every=10th@10:10am`** |
+| 1st  | `1@`, `1st@`               |
+| 2nd  | `2@`, `2nd@`               |
+| 3rd  | `3@`, `3rd@`               |
+| 4th  | `4@`, `4th@`               |
+| 15th | `15@`, `15th@`             |
+| 31st | `31@`, `31st@`             |
 
 
 
 Other Days:
 
->  `--every=eom@10:10am` • repeat every last day of the month at 10:10 AM
-
-| Day       | Input                   |
-| ---------------- | --------------------------------- |
-| Every Day      | `day@`                              |
-| Every Weekday  | `weekday@`                          |
-| End of Month   | `eom@`                              |
+| Day           | Input                     |
+| ------------- | ------------------------- |
+|               | **`--every=eom@10:10am`** |
+| Every Day     | `day@`                    |
+| Every Weekday | `weekday@`                |
+| End of Month  | `eom@`                    |
 
 
 
 Multiples:
 
-> `--every=15,eom@9:00` • repeat every 15th and last day of the month at 10:10 AM
-
-| Input                         |
-| ----------------------------- |
-| `@9:30am,4:30pm`              |
-| `15,eom@10:10`                |
-| `m,w,f@2pm,4pm`               |
-| `<d1>,...,<dN>@<t1>,...,<tN>` |
-
+| Input                    |
+| ------------------------ |
+| `--every=@9:30am,4:30pm` |
+| `--every=15,eom@10:10`   |
+| `--every=m,w,f@2pm,4pm`  |
