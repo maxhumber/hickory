@@ -11,7 +11,7 @@
 
 ### About
 
-`hickory` is a command line tool for scheduling Python scripts. It is not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler. But it is perfect for most *stand-alone* jobs!
+`hickory` is a command line tool for scheduling Python scripts. Though not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler, it's perfect for most stand-alone jobs.
 
 
 
@@ -19,11 +19,11 @@
 
 `hickory` currently supports:
 
-| Operating System | Support                                              |
-| ---------------- | ---------------------------------------------------- |
-| macOS            | ✅ • [launchd](https://en.wikipedia.org/wiki/Launchd) |
-| Linux            | ❌                                                    |
-| Windows          | ❌                                                    |
+| Operating System | Scheduler                                        |
+| ---------------- | ------------------------------------------------ |
+| macOS            | [launchd](https://en.wikipedia.org/wiki/Launchd) |
+| Linux            | ❌                                                |
+| Windows          | ❌                                                |
 
 
 
@@ -78,7 +78,7 @@ hickory kill foo.py
 
 
 
-### `--every=` Examples
+### `every` Examples
 
 English to schedule input:
 
@@ -93,7 +93,7 @@ English to schedule input:
 
 
 
-### `--every=` Table
+### `every` Table
 
 Schedule arguments:
 
