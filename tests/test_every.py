@@ -2,15 +2,10 @@ import pytest
 from hickory.every import *
 
 
-def test_interval_to_lower():
-    s = "MONDAY@9:00AM"
-    assert "monday@9:00am" == interval_to_lower(s)
-
-
 def test_strip_number():
     strings = ["1", "1l", "l"]
     output = [strip_number(s) for s in strings]
-    assert output == ["1", "1", ""]
+    assert output == [1, 1, None]
 
 
 def test_contains_number():
@@ -53,32 +48,75 @@ def test_fail_interval_to_seconds():
         interval_to_seconds("5secondz")
 
 
-def test_day_to_number_in_week():
+def test_start_interval():
+    intervals = ["10seconds", "10minutes", "10hours"]
+    output = [start_interval(i) for i in intervals]
+    assert output == [
+        {"StartInterval": 10},
+        {"StartInterval": 600},
+        {"StartInterval": 36000},
+    ]
+
+
+def test_day_to_weekday_dict():
     days = ["m", "tue", "weds", "thursday", "f", "sat", "sunday"]
-    output = [day_to_number_in_week(d) for d in days]
-    assert output == [1, 2, 3, 4, 5, 6, 7]
+    output = [day_to_weekday_dict(d) for d in days]
+    assert output == [
+        {"Weekday": 1},
+        {"Weekday": 2},
+        {"Weekday": 3},
+        {"Weekday": 4},
+        {"Weekday": 5},
+        {"Weekday": 6},
+        {"Weekday": 7},
+    ]
 
 
-def test_day_to_number_in_month():
+def test_day_to_calendar_day_dict():
     days = ["1", "1st", "2", "2nd", "3", "3rd", "4", "4th", "31", "31st"]
-    output = [day_to_number_in_month(d) for d in days]
-    assert output == [1, 1, 2, 2, 3, 3, 4, 4, 31, 31]
+    output = [day_to_calendar_day_dict(d) for d in days]
+    assert output == [
+        {"Day": 1},
+        {"Day": 1},
+        {"Day": 2},
+        {"Day": 2},
+        {"Day": 3},
+        {"Day": 3},
+        {"Day": 4},
+        {"Day": 4},
+        {"Day": 31},
+        {"Day": 31},
+    ]
 
 
-def test_fail_day_to_number_in_month():
-    with pytest.raises(InvalidMonthDay):
-        day_to_number_in_month("32")
+def test_fail_day_to_calendar_day_dict():
+    with pytest.raises(InvalidCalendarDay):
+        day_to_calendar_day_dict("32")
 
 
-def test_time_to_hour_minute():
+def test_day_to_dict():
+    days = ["day", "1st", "monday"]
+    output = [day_to_dict(day) for day in days]
+    assert output == [{}, {"Day": 1}, {"Weekday": 1}]
+
+
+def test_timestamp_to_dict():
     times = ["20", "8", "8am", "8:30", "8:30am", "8:30pm", "20:30"]
-    output = [time_to_hour_minute(t) for t in times]
-    assert output == [(20, 0), (8, 0), (8, 0), (8, 30), (8, 30), (20, 30), (20, 30)]
+    output = [timestamp_to_dict(t) for t in times]
+    assert output == [
+        {"Hour": 20, "Minute": 0},
+        {"Hour": 8, "Minute": 0},
+        {"Hour": 8, "Minute": 0},
+        {"Hour": 8, "Minute": 30},
+        {"Hour": 8, "Minute": 30},
+        {"Hour": 20, "Minute": 30},
+        {"Hour": 20, "Minute": 30},
+    ]
 
 
-def test_fail_time_to_hour_minute():
+def test_fail_timestamp_to_dict():
     with pytest.raises(InvalidTime):
-        time_to_hour_minute("30:30")
+        timestamp_to_dict("30:30")
 
 
 def test_disjoin():
@@ -97,3 +135,42 @@ def test_disjoin():
         [("m", "8:30"), ("t", "8:30")],
         [("th", "8:30"), ("th", "4:30pm"), ("f", "8:30"), ("f", "4:30pm")],
     ]
+
+
+def test_start_calendar_interval():
+    intervals = [
+        "day@10",
+        "@10:10",
+        "monday@10:10am",
+        "10th@10:10am",
+        "10,20@10am",
+        "monday,w,fri@9:30am,4:30pm"
+        # 'eom@10:10am',
+        # '10,eom@10,10pm'
+    ]
+    output = [start_calendar_interval(i) for i in intervals]
+    assert output == [
+        {"StartCalendarInterval": {"Hour": 10, "Minute": 0}},
+        {"StartCalendarInterval": {"Hour": 10, "Minute": 10}},
+        {"StartCalendarInterval": {"Weekday": 1, "Hour": 10, "Minute": 10}},
+        {"StartCalendarInterval": {"Day": 10, "Hour": 10, "Minute": 10}},
+        {
+            "StartCalendarInterval": [
+                {"Day": 10, "Hour": 10, "Minute": 0},
+                {"Day": 20, "Hour": 10, "Minute": 0},
+            ]
+        },
+        {
+            "StartCalendarInterval": [
+                {"Weekday": 1, "Hour": 9, "Minute": 30},
+                {"Weekday": 1, "Hour": 16, "Minute": 30},
+                {"Weekday": 3, "Hour": 9, "Minute": 30},
+                {"Weekday": 3, "Hour": 16, "Minute": 30},
+                {"Weekday": 5, "Hour": 9, "Minute": 30},
+                {"Weekday": 5, "Hour": 16, "Minute": 30},
+            ]
+        },
+    ]
+
+
+#

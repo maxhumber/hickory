@@ -7,11 +7,11 @@ class InvalidInterval(Exception):
     pass
 
 
-class InvalidWeekDay(Exception):
+class InvalidWeekday(Exception):
     pass
 
 
-class InvalidMonthDay(Exception):
+class InvalidCalendarDay(Exception):
     pass
 
 
@@ -19,16 +19,15 @@ class InvalidTime(Exception):
     pass
 
 
-def interval_to_lower(interval):
-    return str(interval).lower()
-
-
 def strip_number(s):
-    return re.sub("[^0-9]", "", s)
+    try:
+        return int(re.sub("[^0-9]", "", s))
+    except ValueError:
+        return None
 
 
-def contains_number(s):
-    return bool(strip_number(s))
+def contains_number(string):
+    return bool(strip_number(string))
 
 
 def interval_to_components(interval):
@@ -54,7 +53,11 @@ def interval_to_seconds(interval):
     return seconds
 
 
-def day_to_number_in_week(day):
+def start_interval(interval):
+    return {"StartInterval": interval_to_seconds(interval)}
+
+
+def day_to_weekday_dict(day):
     if day in ["m", "mon", "monday"]:
         day_number = 1
     elif day in ["t", "tue", "tues", "tuesday"]:
@@ -70,117 +73,101 @@ def day_to_number_in_week(day):
     elif day in ["su", "sun", "sunday"]:
         day_number = 7
     else:
-        raise InvalidWeekDay(day)
-    return day_number
+        raise InvalidWeekday(day)
+    return {"Weekday": day_number}
 
 
-def day_to_number_in_month(day):
-    number = int(strip_number(day))
-    if 1 <= number <= 31:
-        return number
+def day_to_calendar_day_dict(day):
+    number = strip_number(day)
+    if not (1 <= number <= 31):
+        raise InvalidCalendarDay(day)
+    return {"Day": number}
+
+
+def weekday_to_list():
+    return 'm,t,w,th,f'.split(',')
+
+
+def eom_dict():
+    eom_days = [
+        (1, 31),
+        (2, 28),
+        (3, 31),
+        (4, 30),
+        (5, 31),
+        (6, 30),
+        (7, 31),
+        (8, 31),
+        (9, 30),
+        (10, 31),
+        (11, 30),
+        (12, 31),
+    ]
+    return [{"Day": day, "Month": month} for month, day in eom_days]
+
+def day_to_dict(day):
+    if day in ["", "day"]:
+        return {}
+    # TODO
+    # elif day == "weekday":
+    #     return "every weekday"
+    elif day == "eom":
+        return eom_dict()
+    elif contains_number(day):
+        return day_to_calendar_day_dict(day)
     else:
-        raise InvalidMonthDay(day)
+        return day_to_weekday_dict(day)
 
 
-def time_to_hour_minute(t):
-    retime = re.findall(r"[A-Za-z]+|\d+", t)
-    hour = int(retime[0])
+def timestamp_to_dict(t):
+    rt = re.findall(r"[A-Za-z]+|\d+", t)
+    hour = int(rt[0])
     minute = 0
-    if len(retime) == 2:
-        if retime[1] == "pm":
+    if len(rt) == 2:
+        if rt[1] == "pm":
             hour += 12
-        elif retime[1] == "am":
+        elif rt[1] == "am":
             pass
         else:
-            minute = int(retime[1])
-    if len(retime) == 3:
-        minute = int(retime[1])
-        if retime[2] == "am":
+            minute = int(rt[1])
+    if len(rt) == 3:
+        minute = int(rt[1])
+        if rt[2] == "am":
             pass
-        elif retime[2] == "pm":
+        elif rt[2] == "pm":
             hour += 12
         else:
             raise InvalidTime(t)
     if not ((0 <= hour <= 23) and (0 <= minute <= 59)):
         raise InvalidTime(t)
-    return hour, minute
+    return {"Hour": hour, "Minute": minute}
 
-
-def disjoin(s):
-    days, timestamps = s.split("@")
+def disjoin(interval):
+    days, timestamps = interval.split("@")
     days, timestamps = days.split(","), timestamps.split(",")
     return product(days, timestamps)
 
-
-# special cases
-# - day
-# - weekday
-# - eom
-
-d = {"hi": "bye"}
-d.update({})
-d
-
-
-def sort_day(day):
-    if day in ["", "day"]:
-        return {}
-    elif day == "weekday":  # hard
-        return "every weekday"
-    elif day == "eom":  # hard
-        return "End of month"
-    elif contains_number(day):
-        return "contains number!"
-    else:
-        return "text day?"
-
-
-def interval_to_calendar_interval():
-    pass
-
-
-day = "1st"
-dir(day)
-
-
-def every(interval):
-    s = interval_to_lower(interval)
-
-    if not contains_number(s):
-        raise InvalidInterval(s)
-
-    if "@" not in s:
-        return {"StartInterval": interval_to_seconds(s)}
-
+def start_calendar_interval(interval):
     blocks = []
-    for day, timestamp in disjoin(s):
+    for day, timestamp in disjoin(interval):
         block = {}
-        if day:
-            try:
-                block["Day"] = day_to_number_in_month(day)
-            except ValueError:
-                block["Weekday"] = day_to_number_in_week(day)
-        hour, minute = time_to_hour_minute(timestamp)
-        block["Hour"] = hour
-        block["Minute"] = minute
+        block.update(day_to_dict(day))
+        block.update(timestamp_to_dict(timestamp))
         blocks.append(block)
-
     if len(blocks) > 1:
         value = blocks
     else:
         value = blocks[0]
-
     return {"StartCalendarInterval": value}
 
 
-#
-# inputs = ["1st,2nd,3rd@2:30", "m,t@5:30", '@4:30']
-#
-# for i in inputs:
-#     d = every(i)
-#     print(d)
-#     # print(d)
-#     print(plistlib.dumps(d).decode())
+def every(interval):
+    interval = str(interval).lower()
+    if "@" not in interval:
+        return start_interval(interval)
+    else:
+        return start_calendar_interval(interval)
+
 
 # # plist dump
 # d = {"StartCalendarInterval": {"Hour": int(1), "Minute": int(0)}}
