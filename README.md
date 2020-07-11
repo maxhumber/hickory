@@ -11,9 +11,11 @@
 
 ### About
 
-`hickory` is a command line tool for scheduling Python scripts. Though not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler, `hickory` is perfect for most *stand-alone* jobs. 
+`hickory` is a command line tool for scheduling Python scripts. It is not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler. But it should be perfect for most *stand-alone* jobs. 
 
-Current OS support:
+
+
+### Support 
 
 | Operating System | Supported | Scheduler                                        |
 | ---------------- | --------- | ------------------------------------------------ |
@@ -74,6 +76,10 @@ hickory kill foo.py
 
 
 
+---
+
+
+
 ### `every` Input
 
 **Interval**
@@ -92,7 +98,7 @@ hickory kill foo.py
 
 **Timestamp**
 
-> `--every=@10:10am` • repeat every day at 10:00 AM
+> `--every=@10:10am` • repeat every day at 10:10 AM
 
 | Input      | Time     |
 | ---------- | -------- |
@@ -138,7 +144,7 @@ hickory kill foo.py
 
 
 
-**Special? Day**
+**Other Days**
 
 >  `--every=eom@10:10am` • repeat every last day of the month at 10:10 AM
 
@@ -152,8 +158,12 @@ hickory kill foo.py
 
 **Multiples**
 
-| Input            |      |
-| ---------------- | ---- |
-| `@9:30am,4:30pm` |      |
-| `15,eom@9:00`    |      |
-| `m,w,f@2pm,4pm`  |      |
+> `--every=15,eom@9:00` • repeat every 15th and last day of the month at 10:10 AM
+
+| Input                                   |
+| --------------------------------------- |
+| `@9:30am,4:30pm`                        |
+| `15,eom@10:10`                          |
+| `m,w,f@2pm,4pm`                         |
+| `<day1>,...,<dayN>@<time1>,...,<timeN>` |
+
