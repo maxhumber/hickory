@@ -11,17 +11,19 @@
 
 ### About
 
-`hickory` is a command line tool for scheduling Python scripts. It is not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler. But it should be perfect for most *stand-alone* jobs. 
+`hickory` is a command line tool for scheduling Python scripts. It is not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler. But it is perfect for most *stand-alone* jobs! 
 
 
 
 ### Support 
 
-| Operating System | Supported | Scheduler                                        |
-| ---------------- | --------- | ------------------------------------------------ |
-| macOS            | ✅         | [launchd](https://en.wikipedia.org/wiki/Launchd) |
-| Linux            | ❌         |                                                  |
-| Windows          | ❌         |                                                  |
+`hickory` currently supports:
+
+| Operating System | Support | Scheduler                                        |
+| ---------------- | ------- | ------------------------------------------------ |
+| macOS            | ✅       | [launchd](https://en.wikipedia.org/wiki/Launchd) |
+| Linux            | ❌       |                                                  |
+| Windows          | ❌       |                                                  |
 
 
 
@@ -76,13 +78,11 @@ hickory kill foo.py
 
 
 
----
+### `--every=` Input
 
 
 
-### `every` Input
-
-**Interval**
+Interval:
 
 > `--every=10mins` • repeat every 10 minutes
 
@@ -96,7 +96,7 @@ hickory kill foo.py
 
 
 
-**Timestamp**
+Timestamp:
 
 > `--every=@10:10am` • repeat every day at 10:10 AM
 
@@ -113,7 +113,7 @@ hickory kill foo.py
 
 
 
-**Weekday**
+Weekday:
 
 > `--every=monday@10:10am` • repeat every Monday at 10:10 AM
 
@@ -129,7 +129,7 @@ hickory kill foo.py
 
 
 
-**Calendar Day**
+Calendar Day:
 
 > `--every=10th@10:10am` • repeat every 10th day of the month at 10:10 AM
 
@@ -144,7 +144,7 @@ hickory kill foo.py
 
 
 
-**Other Days**
+Other Days:
 
 >  `--every=eom@10:10am` • repeat every last day of the month at 10:10 AM
 
@@ -156,14 +156,14 @@ hickory kill foo.py
 
 
 
-**Multiples**
+Multiples:
 
 > `--every=15,eom@9:00` • repeat every 15th and last day of the month at 10:10 AM
 
-| Input                                   |
-| --------------------------------------- |
-| `@9:30am,4:30pm`                        |
-| `15,eom@10:10`                          |
-| `m,w,f@2pm,4pm`                         |
-| `<day1>,...,<dayN>@<time1>,...,<timeN>` |
+| Input                         |
+| ----------------------------- |
+| `@9:30am,4:30pm`              |
+| `15,eom@10:10`                |
+| `m,w,f@2pm,4pm`               |
+| `<d1>,...,<dN>@<t1>,...,<tN>` |
 
