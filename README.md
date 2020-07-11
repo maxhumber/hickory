@@ -9,17 +9,19 @@
 </p>
 
 
-### 🚨 Warning
-
-API subject to change - package under active development!
-
-
-
 ### About
 
-Command line tool for scheduling Python scripts on macOS (linux coming soon)...
+`hickory` is a command line tool for scheduling Python scripts with [launchd](https://en.wikipedia.org/wiki/Launchd) on macOS 
 
 Name and logo inspired by the [rhyme](https://en.wikipedia.org/wiki/Hickory_Dickory_Dock).
+
+
+
+### Install
+
+```sh
+pip install hickory
+```
 
 
 
@@ -27,105 +29,98 @@ Name and logo inspired by the [rhyme](https://en.wikipedia.org/wiki/Hickory_Dick
 
 Schedule a script:
 
-- `hickory schedule foo.py --every=10`
+```sh
+hickory schedule foo.py --every=10minutes
+```
 
 View running scripts:
 
-- `hickory list`
+```sh
+hickory schedule info
+```
 
 Kill a running script:
 
-- `hickory kill foo.py`
-
-
-
-
-### Install
-
-PyPI coming soon, but for now:
-
-`pip install git+https://github.com/maxhumber/hickory`
-
-
-
-----
-
-
-
-
-
-# BASIC API
-hickory schedule foo.py 10
-hickory schedule foo.py --every=10
-
-hickory schedule info
-hickory schedule info 6s330d
-hickory schedule info foo.py
-
-hickory schedule kill 6s330d
+```sh
 hickory schedule kill foo.py
+```
 
-## Calendar Intervals for launchd
+Note: 
 
-Month 	Integer 	Month of year (1..12, 1 being January)
-Day 	Integer 	Day of month (1..31)
-Weekday 	Integer 	Day of week (0..7, 0 and 7 being Sunday)
-Hour 	Integer 	Hour of day (0..23)
-Minute 	Integer 	Minute of hour (0..59)
+`stdout` and `stderr` are sent to a `hickory.log` file in the same directory as the script.
 
-## every api
 
-Seconds
-10
---every=10
---every=10s
---every=10sec
---every=10secs
---every=10seconds
 
-Minutes
---every=30m
---every=30min
---every=30mins
---every=30minutes
+### `every` Shorthand
 
-Hours
---every=2h
---every=2hr
---every=2hour
---every=2hours
+**Interval**
 
-Day (will run every day)
---every=day@4:00
---every=day@4:00am
---every=day@4:00pm
---every=day@16:00
---every=@4:00
---every=@4
+> `--every=10mins` • repeat every 10 minutes
 
-++++ Weekday (MTWThF)
---every=weekday@4:00
+| Seconds     | Minutes     | Hours     |
+| ----------- | ----------- | --------- |
+| `10`        |             |           |
+| `10s`       | `10m`       | `10h`     |
+| `10sec`     | `10min`     | `10hr`    |
+| `10secs`    | `10mins`    | `10hrs`   |
+| `10seconds` | `10minutes` | `10hours` |
 
-Specific Day
---every=mon@4:00
---every=monday@4:00
---every=tues@4:000
+**Timestamp**
 
-Specific Calendar Day
---every=1@8:30
---every=1st@8:30
---every=2@8:30
---every=2nd@8:30
---every=3@8:30
---every=3rd@8:30
---every=4@8:30
---every=4th@8:30
---every=13@8:30
+> `--every=@10:10am` • repeat every day at 10:00 AM
 
-++++ Last Day of Month
---every=eom@8:30
+| Input      | Time     |
+| ---------- | -------- |
+| `@10`      | 10:00 AM |
+| `@22`      | 10:00 PM |
+| `@10:10`   | 10:10 AM |
+| `@22:10`   | 10:10 PM |
+| `@10am`    | 10:00 AM |
+| `@10pm`    | 10:00 PM |
+| `@10:10am` | 10:10 AM |
+| `@10:10pm` | 10:10 PM |
 
-Multiple Intervals
---every=15,eom@9:30pm
---every=weekday@9:00am,4:30pm
---every=5,15,20@9:30,5:30pm
+**Weekday**
+
+> `--every=monday@10:10am` • repeat every Monday at 10:10 AM
+
+| Day       | Input    |
+| ---------------- | --------------------------------- |
+| Monday           | `m@`, `mon@`, `monday@`           |
+| Tuesday          | `t@`, `tue@`, `tues@`, `tuesday@` |
+| Wednesday        | `w@`, `wed@`, `weds@`, `wednesday@`       |
+| Thursday         | `th@`, `thur@`, `thurs@`, `thursday@`     |
+| Friday           | `f@`, `fri@`, `friday@`                 |
+| Saturday         | `s@`, `sat@`, `saturday@`               |
+| Sunday           | `su@`, `sun@`, `sunday@`               |
+
+**Calendar Day**
+
+> `--every=10th@10:10am` • repeat every 10th day of the month at 10:10 AM
+
+| Day  | Input          |
+| ---- | -------------- |
+| 1st  | `1@`, `1st@`   |
+| 2nd  | `2@`, `2nd@`   |
+| 3rd  | `3@`, `3rd@`   |
+| 4th  | `4@`, `4th@`   |
+| 15th | `15@`, `15th@` |
+| 31st | `31@`, `31st@` |
+
+**Special? Day**
+
+>  `--every=eom@10:10am` • repeat every last day of the month at 10:10 AM
+
+| Day       | Input                   |
+| ---------------- | --------------------------------- |
+| Every Day      | `day@`                              |
+| Every Weekday  | `weekday@`                          |
+| End of Month   | `eom@`                              |
+
+**Multiples**
+
+| Input            |      |
+| ---------------- | ---- |
+| `@9:30am,4:30pm` |      |
+| `15,eom@9:00`    |      |
+| `m,w,f@2pm,4pm`  |      |

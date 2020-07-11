@@ -1,12 +1,6 @@
-# priority
---every= parser
-put into a folder
-list to info
-extra info
+confirmation?
+run on load option
 
-# after
-Documentation / helpers at command line
-Tests
 Publish to PyPI
 TravisCI osx image
 

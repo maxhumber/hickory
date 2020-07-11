@@ -43,7 +43,7 @@ def test_minutes_interval_to_seconds():
 
 
 def test_hours_interval_to_seconds():
-    intervals = ["2h", "2hr", "2hour", "2hours"]
+    intervals = ["2h", "2hr", "2hrs", "2hour", "2hours"]
     seconds = [interval_to_seconds(i) for i in intervals]
     assert all([s == 7200 for s in seconds])
 
@@ -71,7 +71,29 @@ def test_fail_day_to_number_in_month():
 
 
 def test_time_to_hour_minute():
-    times = ["8:80"]
+    times = ["20", "8", "8am", "8:30", "8:30am", "8:30pm", "20:30"]
+    output = [time_to_hour_minute(t) for t in times]
+    assert output == [(20, 0), (8, 0), (8, 0), (8, 30), (8, 30), (20, 30), (20, 30)]
 
 
-#
+def test_fail_time_to_hour_minute():
+    with pytest.raises(InvalidTime):
+        time_to_hour_minute("30:30")
+
+
+def test_disjoin():
+    strings = [
+        "tuesday@5:30pm",
+        "@9:30am",
+        "@8:30,8:30pm",
+        "m,t@8:30",
+        "th,f@8:30,4:30pm",
+    ]
+    output = [list(disjoin(s)) for s in strings]
+    assert output == [
+        [("tuesday", "5:30pm")],
+        [("", "9:30am")],
+        [("", "8:30"), ("", "8:30pm")],
+        [("m", "8:30"), ("t", "8:30")],
+        [("th", "8:30"), ("th", "4:30pm"), ("f", "8:30"), ("f", "4:30pm")],
+    ]

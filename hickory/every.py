@@ -47,7 +47,7 @@ def interval_to_seconds(interval):
         seconds = value
     elif unit in ["m", "min", "mins", "minute", "minutes"]:
         seconds = value * 60
-    elif unit in ["h", "hr", "hour", "hours"]:
+    elif unit in ["h", "hr", "hrs", "hour", "hours"]:
         seconds = value * 60 * 60
     else:
         raise InvalidInterval(interval) from None
@@ -81,77 +81,67 @@ def day_to_number_in_month(day):
     else:
         raise InvalidMonthDay(day)
 
-#TODO below
 
-times = ['20', '8', '8am', "8:30", '8:30am', '8:30pm', '20:30']
-
-def to_hour_minute(t):
-    # t = '8:30pm'
+def time_to_hour_minute(t):
     retime = re.findall(r"[A-Za-z]+|\d+", t)
     hour = int(retime[0])
     minute = 0
     if len(retime) == 2:
-        if retime[1] == 'pm':
+        if retime[1] == "pm":
             hour += 12
-        elif retime[1] == 'am':
+        elif retime[1] == "am":
             pass
         else:
             minute = int(retime[1])
     if len(retime) == 3:
         minute = int(retime[1])
-        if retime[2] == 'am':
+        if retime[2] == "am":
             pass
-        elif retime[2] == 'pm':
+        elif retime[2] == "pm":
             hour += 12
         else:
             raise InvalidTime(t)
-    if not (0 <= hour <= 23) and (0 <= minute <= 59):
+    if not ((0 <= hour <= 23) and (0 <= minute <= 59)):
         raise InvalidTime(t)
     return hour, minute
 
 
-for t in times:
-    print(t, '->', to_hour_minute(t))
-
-    c = re.findall(r"[A-Za-z]+|\d+", t)
-    print(c)
-    print("->", t.split(":"))
-    print(c, "->", t.split(":"))
-
-t = '8am'
-if not ':' in t:
-    parsed = re.findall(r"[A-Za-z]+|\d+", t)
-hour_minute = t.split(':')
-hour = hour_minute[0]
+def disjoin(s):
+    days, timestamps = s.split("@")
+    days, timestamps = days.split(","), timestamps.split(",")
+    return product(days, timestamps)
 
 
-hour = parsed[0]
+# special cases
+# - day
+# - weekday
+# - eom
 
-[hour, minute, abrv]
+d = {"hi": "bye"}
+d.update({})
+d
 
-def time_to_hour_minute_abrv():
+
+def sort_day(day):
+    if day in ["", "day"]:
+        return {}
+    elif day == "weekday":  # hard
+        return "every weekday"
+    elif day == "eom":  # hard
+        return "End of month"
+    elif contains_number(day):
+        return "contains number!"
+    else:
+        return "text day?"
+
+
+def interval_to_calendar_interval():
     pass
 
 
+day = "1st"
+dir(day)
 
-def time_to_hour_minute(t):
-    t = '8'
-    hour, minute = t.split(":")
-    if "am" in minute:
-        minute = minute[:-2]
-    if "pm" in minute:
-        minute = minute[:-2]
-        hour = hour + 12
-    return int(hour), int(minute)
-
-
-    # print(time_to_hour_minute(t))
-
-def generate_day_timestamp_combos(s):
-    days, timestamps = s.split("@")
-    days, timestamps = days.split(","), timestamps.split(",")
-    combos = product(days, timestamps)
-    return combos
 
 def every(interval):
     s = interval_to_lower(interval)
@@ -162,29 +152,29 @@ def every(interval):
     if "@" not in s:
         return {"StartInterval": interval_to_seconds(s)}
 
-    combos = generate_day_timestamp_combos(s)
-
     blocks = []
-    for day, timestamp in combos:
+    for day, timestamp in disjoin(s):
         block = {}
         if day:
             try:
                 block["Day"] = day_to_number_in_month(day)
             except ValueError:
                 block["Weekday"] = day_to_number_in_week(day)
-        hour, minute = timestamp_to_hour_minute(timestamp)
+        hour, minute = time_to_hour_minute(timestamp)
         block["Hour"] = hour
         block["Minute"] = minute
         blocks.append(block)
 
     if len(blocks) > 1:
-        return {"StartCalendarInterval": blocks}
+        value = blocks
     else:
-        return {"StartCalendarInterval": blocks[0]}
+        value = blocks[0]
+
+    return {"StartCalendarInterval": value}
 
 
 #
-# inputs = ['lol', "1st,2nd,3rd@2:30", "m,t@5:30", '@4:30']
+# inputs = ["1st,2nd,3rd@2:30", "m,t@5:30", '@4:30']
 #
 # for i in inputs:
 #     d = every(i)
