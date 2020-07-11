@@ -80,68 +80,37 @@ hickory kill foo.py
 
 ### `--every=` Input
 
+Schedule arguments lookup table:
 
-
-Interval:
-
-| Interval   | Input                                       |
-| ---------- | ------------------------------------------- |
-|            | **`--every=10mins`**                        |
-| 10 seconds | `10`, `10s`, `10sec`, `10secs`, `10seconds` |
-| 10 minutes | `10m`, `10min`, `10mins`, `10minutes`       |
-| 10 hours   | `10h`, `10hr`, `10hrs`, `10hours`           |
-
-
-
-Timestamp:
-
-| Time     | Input                  |
-| -------- | ---------------------- |
-|          | **`--every=@10:10am`** |
-| 10:00 AM | `@10`, `@10am`         |
-| 10:00 PM | `@22`, `@10pm`         |
-| 10:10 AM | `@10:10`, `@10:10am`   |
-| 10:10 PM | `@22:10`, `@10:10pm`   |
-
-
-
-Weekday:
-
-| Day       | Input                                 |
-| --------- | ------------------------------------- |
-|           | **`--every=monday@10:10am`**          |
-| Monday    | `m@`, `mon@`, `monday@`               |
-| Tuesday   | `t@`, `tue@`, `tues@`, `tuesday@`     |
-| Wednesday | `w@`, `wed@`, `weds@`, `wednesday@`   |
-| Thursday  | `th@`, `thur@`, `thurs@`, `thursday@` |
-| Friday    | `f@`, `fri@`, `friday@`               |
-| Saturday  | `s@`, `sat@`, `saturday@`             |
-| Sunday    | `su@`, `sun@`, `sunday@`              |
-
-
-
-Calendar Day:
-
-| Day  | Input                      |
-| ---- | -------------------------- |
-|      | **`--every=10th@10:10am`** |
-| 1st  | `1@`, `1st@`               |
-| 2nd  | `2@`, `2nd@`               |
-| 3rd  | `3@`, `3rd@`               |
-| 4th  | `4@`, `4th@`               |
-| 15th | `15@`, `15th@`             |
-| 31st | `31@`, `31st@`             |
-
-
-
-Other Days:
-
-| Day           | Input                     |
-| ------------- | ------------------------- |
-|               | **`--every=eom@10:10am`** |
-| Every Day     | `day@`                    |
-| Every Weekday | `weekday@`                |
-| End of Month  | `eom@`                    |
+| <u>Interval</u>         |                                             |
+| ----------------------- | ------------------------------------------- |
+| 10 seconds              | `10`, `10s`, `10sec`, `10secs`, `10seconds` |
+| 10 minutes              | `10m`, `10min`, `10mins`, `10minutes`       |
+| 10 hours                | `10h`, `10hr`, `10hrs`, `10hours`           |
+| <u>**Time**</u>         |                                             |
+| 10:00 AM                | `@10`, `@10am`                              |
+| 10:00 PM                | `@22`, `@10pm`                              |
+| 10:10 AM                | `@10:10`, `@10:10am`                        |
+| 10:10 PM                | `@22:10`, `@10:10pm`                        |
+| <u>**Weekday**</u>      |                                             |
+| Monday                  | `m@`, `mon@`, `monday@`                     |
+| Tuesday                 | `t@`, `tue@`, `tues@`, `tuesday@`           |
+| Wednesday               | `w@`, `wed@`, `weds@`, `wednesday@`         |
+| Thursday                | `th@`, `thur@`, `thurs@`, `thursday@`       |
+| Friday                  | `f@`, `fri@`, `friday@`                     |
+| Saturday                | `s@`, `sat@`, `saturday@`                   |
+| Sunday                  | `su@`, `sun@`, `sunday@`                    |
+| <u>**Calendar Day**</u> |                                             |
+| 1st                     | `1@`, `1st@`                                |
+| 2nd                     | `2@`, `2nd@`                                |
+| 3rd                     | `3@`, `3rd@`                                |
+| 4th                     | `4@`, `4th@`                                |
+| 15th                    | `15@`, `15th@`                              |
+| 31st                    | `31@`, `31st@`                              |
+| <u>**Other Day**</u>    |                                             |
+| Every Day               | `day@`                                      |
+| Every Weekday           | `weekday@`                                  |
+| End of Month            | `eom@`                                      |
 
 
 
