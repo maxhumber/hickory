@@ -11,13 +11,21 @@
 
 ### About
 
-`hickory` is a command line tool for scheduling Python scripts with [launchd](https://en.wikipedia.org/wiki/Launchd) on macOS 
+`hickory` is a command line tool for scheduling Python scripts. Though not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler, `hickory` is perfect for most *stand-alone* jobs. 
 
-Name and logo inspired by the [rhyme](https://en.wikipedia.org/wiki/Hickory_Dickory_Dock).
+Current OS support:
+
+| Operating System | Supported | Scheduler                                        |
+| ---------------- | --------- | ------------------------------------------------ |
+| macOS            | ✅         | [launchd](https://en.wikipedia.org/wiki/Launchd) |
+| Linux            | ❌         |                                                  |
+| Windows          | ❌         |                                                  |
 
 
 
 ### Install
+
+`hickory` is installed at the command line:
 
 ```sh
 pip install hickory
@@ -25,33 +33,48 @@ pip install hickory
 
 
 
-### Usage
+### Quickstart
 
-Schedule a script:
+Create a python script called `foo.py`:
+
+```python
+# foo.py
+import datetime
+import time
+
+stamp = datetime.datetime.now().strftime("%H:%M:%S")
+time.sleep(5)
+
+print(f"Foo - {stamp} + 5 seconds")
+```
+
+Schedule `foo.py` to execute every ten minutes:
 
 ```sh
 hickory schedule foo.py --every=10minutes
 ```
 
-View running scripts:
+Check the execution status of `foo.py`:
 
 ```sh
-hickory schedule info
+hickory status
 ```
 
-Kill a running script:
+Check the `stdout` and `stderr` logs for the `foo.py` script:
+
+```
+tail -f hickory.log
+```
+
+Kill (stop and delete) the schedule for `foo.py`:
 
 ```sh
-hickory schedule kill foo.py
+hickory kill foo.py
 ```
 
-Note: 
-
-`stdout` and `stderr` are sent to a `hickory.log` file in the same directory as the script.
 
 
-
-### `every` Shorthand
+### `every` Input
 
 **Interval**
 
@@ -65,6 +88,8 @@ Note:
 | `10secs`    | `10mins`    | `10hrs`   |
 | `10seconds` | `10minutes` | `10hours` |
 
+
+
 **Timestamp**
 
 > `--every=@10:10am` • repeat every day at 10:00 AM
@@ -73,12 +98,14 @@ Note:
 | ---------- | -------- |
 | `@10`      | 10:00 AM |
 | `@22`      | 10:00 PM |
-| `@10:10`   | 10:10 AM |
-| `@22:10`   | 10:10 PM |
 | `@10am`    | 10:00 AM |
 | `@10pm`    | 10:00 PM |
+| `@10:10`   | 10:10 AM |
+| `@22:10`   | 10:10 PM |
 | `@10:10am` | 10:10 AM |
 | `@10:10pm` | 10:10 PM |
+
+
 
 **Weekday**
 
@@ -94,6 +121,8 @@ Note:
 | Saturday         | `s@`, `sat@`, `saturday@`               |
 | Sunday           | `su@`, `sun@`, `sunday@`               |
 
+
+
 **Calendar Day**
 
 > `--every=10th@10:10am` • repeat every 10th day of the month at 10:10 AM
@@ -107,6 +136,8 @@ Note:
 | 15th | `15@`, `15th@` |
 | 31st | `31@`, `31st@` |
 
+
+
 **Special? Day**
 
 >  `--every=eom@10:10am` • repeat every last day of the month at 10:10 AM
@@ -116,6 +147,8 @@ Note:
 | Every Day      | `day@`                              |
 | Every Weekday  | `weekday@`                          |
 | End of Month   | `eom@`                              |
+
+
 
 **Multiples**
 
