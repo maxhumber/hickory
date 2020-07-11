@@ -3,19 +3,7 @@ import plistlib
 import re
 
 
-class InvalidInterval(Exception):
-    pass
-
-
-class InvalidWeekday(Exception):
-    pass
-
-
-class InvalidCalendarDay(Exception):
-    pass
-
-
-class InvalidTime(Exception):
+class HickoryError(Exception):
     pass
 
 
@@ -34,8 +22,8 @@ def interval_to_components(interval):
     c = re.findall(r"[A-Za-z]+|\d+", interval)
     try:
         value = int(c[0])
-    except ValueError:
-        raise InvalidInterval(interval) from None
+    except (ValueError, IndexError):
+        raise HickoryError(f"Invalid interval: {interval}") from None
     unit = "s" if len(c) == 1 else c[1]
     return value, unit
 
@@ -49,7 +37,7 @@ def interval_to_seconds(interval):
     elif unit in ["h", "hr", "hrs", "hour", "hours"]:
         seconds = value * 60 * 60
     else:
-        raise InvalidInterval(interval) from None
+        raise HickoryError(f"Invalid interval: {interval}")
     return seconds
 
 
@@ -73,22 +61,22 @@ def day_to_weekday_dict(day):
     elif day in ["su", "sun", "sunday"]:
         day_number = 7
     else:
-        raise InvalidWeekday(day)
+        raise HickoryError(f"Invalid weekday: {day}")
     return {"Weekday": day_number}
 
 
 def day_to_calendar_day_dict(day):
     number = strip_number(day)
     if not (1 <= number <= 31):
-        raise InvalidCalendarDay(day)
+        raise HickoryError(f"Invalid calendar day: {day}")
     return {"Day": number}
 
 
-def weekday_to_list():
-    return 'm,t,w,th,f'.split(',')
+def weekday_list_dict():
+    return [{"Weekday": i} for i in range(1, 5 + 1)]
 
 
-def eom_dict():
+def eom_list_dict():
     eom_days = [
         (1, 31),
         (2, 28),
@@ -105,23 +93,26 @@ def eom_dict():
     ]
     return [{"Day": day, "Month": month} for month, day in eom_days]
 
-def day_to_dict(day):
+
+def day_to_list_dict(day):
     if day in ["", "day"]:
-        return {}
-    # TODO
-    # elif day == "weekday":
-    #     return "every weekday"
+        return [{}]
+    elif day == "weekday":
+        return weekday_list_dict()
     elif day == "eom":
-        return eom_dict()
+        return eom_list_dict()
     elif contains_number(day):
-        return day_to_calendar_day_dict(day)
+        return [day_to_calendar_day_dict(day)]
     else:
-        return day_to_weekday_dict(day)
+        return [day_to_weekday_dict(day)]
 
 
 def timestamp_to_dict(t):
     rt = re.findall(r"[A-Za-z]+|\d+", t)
-    hour = int(rt[0])
+    try:
+        hour = int(rt[0])
+    except (ValueError, IndexError):
+        raise HickoryError(f"Invalid time: {t}") from None
     minute = 0
     if len(rt) == 2:
         if rt[1] == "pm":
@@ -137,23 +128,31 @@ def timestamp_to_dict(t):
         elif rt[2] == "pm":
             hour += 12
         else:
-            raise InvalidTime(t)
+            raise HickoryError(f"Invalid time: {t}")
     if not ((0 <= hour <= 23) and (0 <= minute <= 59)):
-        raise InvalidTime(t)
+        raise HickoryError(f"Invalid time: {t}")
     return {"Hour": hour, "Minute": minute}
 
+
 def disjoin(interval):
-    days, timestamps = interval.split("@")
+    try:
+        days, timestamps = interval.split("@")
+    except ValueError:
+        raise HickoryError(f"Invalid time: {interval}") from None
     days, timestamps = days.split(","), timestamps.split(",")
     return product(days, timestamps)
+
 
 def start_calendar_interval(interval):
     blocks = []
     for day, timestamp in disjoin(interval):
-        block = {}
-        block.update(day_to_dict(day))
-        block.update(timestamp_to_dict(timestamp))
-        blocks.append(block)
+        days = day_to_list_dict(day)
+        timestamp = timestamp_to_dict(timestamp)
+        for day in days:
+            block = {}
+            block.update(day)
+            block.update(timestamp)
+            blocks.append(block)
     if len(blocks) > 1:
         value = blocks
     else:

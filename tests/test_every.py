@@ -21,7 +21,7 @@ def test_interval_to_components():
 
 
 def test_fail_interval_to_components():
-    with pytest.raises(InvalidInterval):
+    with pytest.raises(HickoryError):
         interval_to_components("s5")
 
 
@@ -44,7 +44,7 @@ def test_hours_interval_to_seconds():
 
 
 def test_fail_interval_to_seconds():
-    with pytest.raises(InvalidInterval):
+    with pytest.raises(HickoryError):
         interval_to_seconds("5secondz")
 
 
@@ -90,14 +90,41 @@ def test_day_to_calendar_day_dict():
 
 
 def test_fail_day_to_calendar_day_dict():
-    with pytest.raises(InvalidCalendarDay):
+    with pytest.raises(HickoryError):
         day_to_calendar_day_dict("32")
 
 
-def test_day_to_dict():
+def test_weekday_list_dict():
+    assert weekday_list_dict() == [
+        {"Weekday": 1},
+        {"Weekday": 2},
+        {"Weekday": 3},
+        {"Weekday": 4},
+        {"Weekday": 5},
+    ]
+
+
+def test_eom_list_dict():
+    assert eom_list_dict() == [
+        {"Day": 31, "Month": 1},
+        {"Day": 28, "Month": 2},
+        {"Day": 31, "Month": 3},
+        {"Day": 30, "Month": 4},
+        {"Day": 31, "Month": 5},
+        {"Day": 30, "Month": 6},
+        {"Day": 31, "Month": 7},
+        {"Day": 31, "Month": 8},
+        {"Day": 30, "Month": 9},
+        {"Day": 31, "Month": 10},
+        {"Day": 30, "Month": 11},
+        {"Day": 31, "Month": 12},
+    ]
+
+
+def test_day_to_list_dict():
     days = ["day", "1st", "monday"]
-    output = [day_to_dict(day) for day in days]
-    assert output == [{}, {"Day": 1}, {"Weekday": 1}]
+    output = [day_to_list_dict(day) for day in days]
+    assert output == [[{}], [{"Day": 1}], [{"Weekday": 1}]]
 
 
 def test_timestamp_to_dict():
@@ -115,7 +142,7 @@ def test_timestamp_to_dict():
 
 
 def test_fail_timestamp_to_dict():
-    with pytest.raises(InvalidTime):
+    with pytest.raises(HickoryError):
         timestamp_to_dict("30:30")
 
 
@@ -144,9 +171,10 @@ def test_start_calendar_interval():
         "monday@10:10am",
         "10th@10:10am",
         "10,20@10am",
-        "monday,w,fri@9:30am,4:30pm"
-        # 'eom@10:10am',
-        # '10,eom@10,10pm'
+        "monday,w,fri@9:30am,4:30pm",
+        "eom@10:10am",
+        "10,eom@10,10pm",
+        "weekday@9:30,10pm",
     ]
     output = [start_calendar_interval(i) for i in intervals]
     assert output == [
@@ -170,7 +198,94 @@ def test_start_calendar_interval():
                 {"Weekday": 5, "Hour": 16, "Minute": 30},
             ]
         },
+        {
+            "StartCalendarInterval": [
+                {"Day": 31, "Month": 1, "Hour": 10, "Minute": 10},
+                {"Day": 28, "Month": 2, "Hour": 10, "Minute": 10},
+                {"Day": 31, "Month": 3, "Hour": 10, "Minute": 10},
+                {"Day": 30, "Month": 4, "Hour": 10, "Minute": 10},
+                {"Day": 31, "Month": 5, "Hour": 10, "Minute": 10},
+                {"Day": 30, "Month": 6, "Hour": 10, "Minute": 10},
+                {"Day": 31, "Month": 7, "Hour": 10, "Minute": 10},
+                {"Day": 31, "Month": 8, "Hour": 10, "Minute": 10},
+                {"Day": 30, "Month": 9, "Hour": 10, "Minute": 10},
+                {"Day": 31, "Month": 10, "Hour": 10, "Minute": 10},
+                {"Day": 30, "Month": 11, "Hour": 10, "Minute": 10},
+                {"Day": 31, "Month": 12, "Hour": 10, "Minute": 10},
+            ]
+        },
+        {
+            "StartCalendarInterval": [
+                {"Day": 10, "Hour": 10, "Minute": 0},
+                {"Day": 10, "Hour": 22, "Minute": 0},
+                {"Day": 31, "Month": 1, "Hour": 10, "Minute": 0},
+                {"Day": 28, "Month": 2, "Hour": 10, "Minute": 0},
+                {"Day": 31, "Month": 3, "Hour": 10, "Minute": 0},
+                {"Day": 30, "Month": 4, "Hour": 10, "Minute": 0},
+                {"Day": 31, "Month": 5, "Hour": 10, "Minute": 0},
+                {"Day": 30, "Month": 6, "Hour": 10, "Minute": 0},
+                {"Day": 31, "Month": 7, "Hour": 10, "Minute": 0},
+                {"Day": 31, "Month": 8, "Hour": 10, "Minute": 0},
+                {"Day": 30, "Month": 9, "Hour": 10, "Minute": 0},
+                {"Day": 31, "Month": 10, "Hour": 10, "Minute": 0},
+                {"Day": 30, "Month": 11, "Hour": 10, "Minute": 0},
+                {"Day": 31, "Month": 12, "Hour": 10, "Minute": 0},
+                {"Day": 31, "Month": 1, "Hour": 22, "Minute": 0},
+                {"Day": 28, "Month": 2, "Hour": 22, "Minute": 0},
+                {"Day": 31, "Month": 3, "Hour": 22, "Minute": 0},
+                {"Day": 30, "Month": 4, "Hour": 22, "Minute": 0},
+                {"Day": 31, "Month": 5, "Hour": 22, "Minute": 0},
+                {"Day": 30, "Month": 6, "Hour": 22, "Minute": 0},
+                {"Day": 31, "Month": 7, "Hour": 22, "Minute": 0},
+                {"Day": 31, "Month": 8, "Hour": 22, "Minute": 0},
+                {"Day": 30, "Month": 9, "Hour": 22, "Minute": 0},
+                {"Day": 31, "Month": 10, "Hour": 22, "Minute": 0},
+                {"Day": 30, "Month": 11, "Hour": 22, "Minute": 0},
+                {"Day": 31, "Month": 12, "Hour": 22, "Minute": 0},
+            ]
+        },
+        {
+            "StartCalendarInterval": [
+                {"Weekday": 1, "Hour": 9, "Minute": 30},
+                {"Weekday": 2, "Hour": 9, "Minute": 30},
+                {"Weekday": 3, "Hour": 9, "Minute": 30},
+                {"Weekday": 4, "Hour": 9, "Minute": 30},
+                {"Weekday": 5, "Hour": 9, "Minute": 30},
+                {"Weekday": 1, "Hour": 22, "Minute": 0},
+                {"Weekday": 2, "Hour": 22, "Minute": 0},
+                {"Weekday": 3, "Hour": 22, "Minute": 0},
+                {"Weekday": 4, "Hour": 22, "Minute": 0},
+                {"Weekday": 5, "Hour": 22, "Minute": 0},
+            ]
+        },
     ]
 
 
-#
+def test_every():
+    intervals = ["10", "10mins", "@10", "monday@10:00pm"]
+    output = [every(i) for i in intervals]
+    assert output == [
+        {"StartInterval": 10},
+        {"StartInterval": 600},
+        {"StartCalendarInterval": {"Hour": 10, "Minute": 0}},
+        {"StartCalendarInterval": {"Weekday": 1, "Hour": 22, "Minute": 0}},
+    ]
+
+
+def test_hickory_errors():
+    with pytest.raises(HickoryError):
+        every("")
+    with pytest.raises(HickoryError):
+        every("z")
+    with pytest.raises(HickoryError):
+        every("1z")
+    with pytest.raises(HickoryError):
+        every("z@z")
+    with pytest.raises(HickoryError):
+        every("@")
+    with pytest.raises(HickoryError):
+        every("100@100")
+    with pytest.raises(HickoryError):
+        every("@10:10:10")
+    with pytest.raises(HickoryError):
+        every("@10@10")

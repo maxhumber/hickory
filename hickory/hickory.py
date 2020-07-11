@@ -8,34 +8,47 @@ from uuid import uuid4
 from fire import Fire  # to remove... eventually
 
 try:
+    from .every import every as every_to_dict
     from .run import run
 except ImportError:
+    from hickory.every import every as every_to_dict
     from hickory.run import run
 
+
+USER_HOME = str(Path.home())
+LAUNCHD_PATH = f'{USER_HOME}/Library/LaunchAgents'
 HICKORY_SERVICE = "hickory"
 
 
-def schedule(file_name, every=10, run_now=False):
+def generate_ldict(script, every):
+    '''
+    DOCTODO // Build launchd compatible dictionary
+    '''
     which_python = sys.executable
     working_directory = str(Path.cwd())
-    home = str(Path.home())
-    hid = uuid4().hex[:6]  # hickory_id
-    hickory_name = f"{HICKORY_SERVICE}.{hid}.{file_name}"
-    # create the plist file
-    d = {
-        "Label": hickory_name,
+    hid = uuid4().hex[:6]
+    hickory_label = f"{HICKORY_SERVICE}.{hid}.{script}"
+    launchd_dict = {
+        "Label": hickory_label,
         "WorkingDirectory": working_directory,
-        "ProgramArguments": [which_python, file_name],
-        "StartInterval": every,
-        "RunAtLoad": run_now,
+        "ProgramArguments": [which_python, script],
+        "RunAtLoad": False,
         "StandardErrorPath": f"{working_directory}/hickory.log",
         "StandardOutPath": f"{working_directory}/hickory.log",
     }
-    # write the plist file
-    with open(f"{home}/Library/LaunchAgents/{hickory_name}.plist", "wb") as f:
-        plistlib.dump(d, f)
-    # schedule
-    run(f"launchctl load {home}/Library/LaunchAgents/{hickory_name}.plist")
+    launchd_dict.update(every_to_dict(every))
+    return launchd_dict
+
+
+def schedule(script, every):
+    '''
+    DOCTODO // schedule the actul script!
+    '''
+    ldict = generate_ldict(script, every)
+    path = f"{LAUNCHD_PATH}/{ldict["Label"]}.plist"
+    with open(f"{path}", "wb") as f:
+        plistlib.dump(ldict, f)
+    run(f"launchctl load {path}")
 
 
 def parse_gui_infodump(info):
@@ -92,14 +105,14 @@ def list():
 
 
 def kill(id):
-    home = str(Path.home())
+    USER_HOME = str(Path.USER_HOME())
     # unload from launchd
     unload = (
-        f"launchctl unload {home}/Library/LaunchAgents/{HICKORY_SERVICE}.{id}.plist"
+        f"launchctl unload {USER_HOME}/Library/LaunchAgents/{HICKORY_SERVICE}.{id}.plist"
     )
     run(unload)
     # delete the plist file
-    run(f"rm {home}/Library/LaunchAgents/{HICKORY_SERVICE}.{id}.plist")
+    run(f"rm {USER_HOME}/Library/LaunchAgents/{HICKORY_SERVICE}.{id}.plist")
 
 
 def main():
