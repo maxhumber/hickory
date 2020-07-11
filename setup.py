@@ -21,7 +21,7 @@ setup(
     license="MIT",
     packages=["hickory"],
     install_requires=["fire"],
-    entry_points={"console_scripts": ["hickory=hickory.hickory:main"]},
+    entry_points={"console_scripts": ["hickory=hickory.cli:main"]},
     python_requires=">=3.6",
     setup_requires=["setuptools>=38.6.0"],
 )

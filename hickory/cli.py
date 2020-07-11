@@ -1,16 +1,17 @@
-import json  # for pretty print
+import json
 from pathlib import Path
 import plistlib
 import re
 import sys
 from uuid import uuid4
 
-from fire import Fire  # to remove... eventually
+from fire import Fire
 
 try:
     from .every import every as every_to_dict
     from .run import run
 except ImportError:
+    # FOR TESTING
     from hickory.every import every as every_to_dict
     from hickory.run import run
 
@@ -20,7 +21,7 @@ LAUNCHD_PATH = f'{USER_HOME}/Library/LaunchAgents'
 HICKORY_SERVICE = "hickory"
 
 
-def generate_ldict(script, every):
+def generate_launchd_dict(script, every):
     '''
     DOCTODO // Build launchd compatible dictionary
     '''
@@ -30,6 +31,7 @@ def generate_ldict(script, every):
     hickory_label = f"{HICKORY_SERVICE}.{hid}.{script}"
     launchd_dict = {
         "Label": hickory_label,
+        "Every": every,
         "WorkingDirectory": working_directory,
         "ProgramArguments": [which_python, script],
         "RunAtLoad": False,
@@ -42,14 +44,17 @@ def generate_ldict(script, every):
 
 def schedule(script, every):
     '''
-    DOCTODO // schedule the actul script!
+    DOCTODO // schedule the actual script!
     '''
-    ldict = generate_ldict(script, every)
-    path = f"{LAUNCHD_PATH}/{ldict["Label"]}.plist"
+    launchd_dict = generate_launchd_dict(script, every)
+    path = f"{LAUNCHD_PATH}/{launchd_dict['Label']}.plist"
     with open(f"{path}", "wb") as f:
-        plistlib.dump(ldict, f)
+        plistlib.dump(launchd_dict, f)
     run(f"launchctl load {path}")
 
+
+def status():
+    pass
 
 def parse_gui_infodump(info):
     path, stdout, stderr = re.findall("path = (.*?)\n", info)
@@ -75,6 +80,13 @@ def parse_gui_infodump(info):
         "stderr": stderr,
     }
 
+# script = 'hickory.d2d800.foo.py'
+# script
+#
+# output = run(f"launchctl print gui/{uid}/{script}")
+# print(output)
+#
+# print(re.findall(r"^.*descriptor(?:[\s\S]*)^.*\}", output, re.M)[0])
 
 def all_info():
     uid = run("id -u")
@@ -104,15 +116,13 @@ def list():
     return run(f"launchctl list | grep {HICKORY_SERVICE}")
 
 
-def kill(id):
-    USER_HOME = str(Path.USER_HOME())
-    # unload from launchd
-    unload = (
-        f"launchctl unload {USER_HOME}/Library/LaunchAgents/{HICKORY_SERVICE}.{id}.plist"
-    )
-    run(unload)
-    # delete the plist file
-    run(f"rm {USER_HOME}/Library/LaunchAgents/{HICKORY_SERVICE}.{id}.plist")
+def kill(id_or_script):
+    '''
+    DOCTODO // kill (stop and delete) the scheduler for script name or id
+    '''
+    for file in Path(LAUNCHD_PATH).glob(f'{HICKORY_SERVICE}*{id_or_script}*'):
+        run(f"launchctl unload {file}")
+        run(f"rm {file}")
 
 
 def main():
