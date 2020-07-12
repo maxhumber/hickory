@@ -5,13 +5,14 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="hickory",
-    version="0.5",
+    version="0.5.0",
     description="🕰 The command line tool for scheduling Python scripts",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
         "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers" "Topic :: Office/Business :: Scheduling",
+        "Intended Audience :: Developers",
+        "Topic :: Office/Business :: Scheduling",
         "Topic :: Terminals",
     ],
     keywords=["schedule", "scheduling", "cron", "crontab", "launchd"],
