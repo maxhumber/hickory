@@ -8,23 +8,24 @@ from uuid import uuid4
 from fire import Fire
 
 try:
-    from .every import every as every_to_dict, HickoryError
+    from .every import every as every_to_dict
     from .run import run
 except ImportError:
     # FOR TESTING
-    from hickory.every import every as every_to_dict, HickoryError
+    from hickory.every import every as every_to_dict
     from hickory.run import run
 
 
 USER_HOME = str(Path.home())
-LAUNCHD_PATH = f'{USER_HOME}/Library/LaunchAgents'
+USER_ID = run("id -u")
+LAUNCHD_PATH = f"{USER_HOME}/Library/LaunchAgents"
 HICKORY_SERVICE = "hickory"
 
 
 def generate_launchd_dict(script, every):
-    '''
+    """
     DOCTODO // Build launchd compatible dictionary
-    '''
+    """
     which_python = sys.executable
     working_directory = str(Path.cwd())
     hid = uuid4().hex[:6]
@@ -43,9 +44,9 @@ def generate_launchd_dict(script, every):
 
 
 def schedule(script, every):
-    '''
+    """
     DOCTODO // schedule the actual script!
-    '''
+    """
     if not Path(script).exists():
         raise FileNotFoundError(script)
     launchd_dict = generate_launchd_dict(script, every)
@@ -56,72 +57,41 @@ def schedule(script, every):
 
 
 def kill(id_or_script):
-    '''
+    """
     DOCTODO // kill (stop and delete) the scheduler for script name or id
-    '''
-    for file in Path(LAUNCHD_PATH).glob(f'{HICKORY_SERVICE}*{id_or_script}*'):
+    """
+    for file in Path(LAUNCHD_PATH).glob(f"{HICKORY_SERVICE}*{id_or_script}*"):
         run(f"launchctl unload {file}")
         run(f"rm {file}")
 
 
-####
-
-uid = run("id -u")
-running = run(f"launchctl list | grep {HICKORY_SERVICE}")
-scripts = [script.split("\t")[-1] for script in running.split("\n")]
-infos = []
-script = scripts[0]
-for script in scripts:
-    infodump = run(f"launchctl print gui/{uid}/{script}")
-    print(infodump)
-    info = parse_gui_infodump(infodump)
-    infos.append(info)
-# return json.dumps(infos, indent=2)
-return infos
-
-
-
-
-
-def parse_gui_infodump(info):
-    path, stdout, stderr = re.findall("path = (.*?)\n", info)
-    plist_name = (
-        path.split("/")[-1].replace(f"{HICKORY_SERVICE}.", "").replace(".plist", "")
-    )
+def info_from_path(path):
+    """
+    DOCTODO // Info abnout the running script
+    """
+    with open(path, "rb") as f:
+        launchd_dict = plistlib.load(f)
+    script = launchd_dict["Label"]
+    split = script.split(".")
+    info = run(f"launchctl print gui/{USER_ID}/{script}")
     return {
-        "plist_name": plist_name,
-        "hid": plist_name.split(".")[0],
-        "script": ".".join(plist_name.split(".")[1:]),
-        # need
-        "run_interval": re.findall("run interval = (.*?)\n", info)[0],
+        "hid": split[1],
+        "file": ".".join(split[2:]),
+        "every": launchd_dict["Every"],
         "runs": re.findall("runs = (.*?)\n", info)[0],
         "state": re.findall("state = (.*?)\n", info)[0],
-        # nice to have
-        "script_path": path,
-        "last_exit_code": re.findall("last exit code = (.*?)\n", info)[0],
-        # probably don't need
-        "program": re.findall("program = (.*?)\n", info)[0],
-        "working_directory": re.findall("working directory = (.*?)\n", info)[0],
-        "environment_path": re.findall("PATH => (.*?)\n", info)[0],
-        "stdout": stdout,
-        "stderr": stderr,
     }
 
 
-for file in Path(LAUNCHD_PATH).glob(f'*{HICKORY_SERVICE}*'):
-    print(file)
-
-
-
-
-
 def status():
-        # HID   FILE     RUNS   STATE    INTERVAL
-        # 3300  bar.py   17     waiting  10 seconds
-    infos = all_info()
-    terminal_string = "hid - script - runs - state - interval"
-    for i in infos:
-        s = f"\n{i['hid']} - {i['script']} - {i['runs']} - {i['state']} - {i['run_interval']}"
+    """
+    # HID   FILE     RUNS   STATE    INTERVAL
+    # 3300  bar.py   17     waiting  10 seconds
+    """
+    terminal_string = "hid    - file   - state   - runs - interval".upper()
+    for path in Path(LAUNCHD_PATH).glob(f"*{HICKORY_SERVICE}*"):
+        i = info_from_path(path)
+        s = f"\n{i['hid']} - {i['file']} - {i['state']} - {i['runs']} - {i['every']}"
         terminal_string = terminal_string + s
     return terminal_string
 
@@ -134,7 +104,7 @@ def main():
     Fire(
         {
             "schedule": schedule,
-            "list": list,
+            "list": list,  # for debugging
             "status": status,
             "kill": kill,
         }
