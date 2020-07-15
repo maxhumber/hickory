@@ -1,0 +1,5 @@
+[Unit]
+Description = Python Demo Service
+
+[Service]
+ExecStart = /usr/bin/python path/to/your/python_demo_service.py

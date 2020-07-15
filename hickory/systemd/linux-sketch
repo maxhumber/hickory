@@ -1,0 +1,47 @@
+# inspired by; https://github.com/torfsen/python-systemd-tutorial
+
+adduser max
+usermod -aG sudo max
+rsync --archive --chown=max:max ~/.ssh /home/max
+
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+bash ~/miniconda.sh -b -p $HOME/miniconda
+source miniconda/bin/activate
+
+# for testing
+mkdir demo
+cd demo
+
+# demo.py
+import time
+print('Hello from the Python Demo Service')
+time.sleep(5)
+
+# go to the the place to put it
+mkdir -p ~/.config/systemd/user/
+cd ~/.config/systemd/user/
+nano
+
+# nano ~/.config/systemd/user/python_demo_service.service
+[Unit]
+Description=Python Demo Service
+[Service]
+ExecStart=/home/max/miniconda/bin/python -u /home/max/demo/demo.py
+StandardOutput=file:/home/max/hickory.log
+StandardError=inherit
+
+## see it
+systemctl --user list-unit-files | grep python_demo_service
+
+## run it
+systemctl --user daemon-reload
+systemctl --user start python_demo_service
+
+# check it running
+systemctl --user status python_demo_service
+
+## stop it
+systemctl --user stop python_demo_service
+
+# delete it
+rm /home/max/.config/systemd/user/python_demo_service.service
