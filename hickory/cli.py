@@ -1,20 +1,24 @@
 import sys
 from pathlib import Path
 from uuid import uuid4
+
 from fire import Fire
 
-from .launchd.kill import kill as kill_launchd
-from .launchd.schedule import schedule as schedule_launchd
-from .launchd.status import status as status_launchd
-from .launchd.status import list as list_launchd
-
+from .constants import HICKORY_SERVICE
+from .launchd import schedule_launchd, kill_launchd, status_launchd
+from .systemd import schedule_systemd, kill_systemd, status_systemd
 
 def schedule(script, every):
     if not Path(script).exists():
         raise FileNotFoundError(script)
 
+    id = uuid4().hex[:6]
+    label = f"{HICKORY_SERVICE}.{id}.{script}"
+    working_directory = str(Path.cwd())
+    which_python = sys.executable
+
     if sys.platform == "darwin":
-        schedule_launchd(script, every)
+        schedule_launchd(label, working_directory, which_python, script, every)
     elif sys.platform == "linux":
         pass  # schedule_systemd
     else:
@@ -39,18 +43,9 @@ def status():
         raise OSError("Operating System Not Supported")
 
 
-def list():
-    if sys.platform == "darwin":
-        return list_launchd()
-    elif sys.platform == "linux":
-        pass
-    else:
-        raise OSError("Operating System Not Supported")
-
-
 def main():
     Fire(
-        {"schedule": schedule, "list": list, "status": status, "kill": kill,}
+        {"schedule": schedule, "status": status, "kill": kill}
     )
 
 

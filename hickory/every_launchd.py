@@ -1,22 +1,13 @@
 from itertools import product
 import re
 
-try:
-    from ..shared import (
-        HickoryError,
-        strip_number,
-        contains_number,
-        interval_to_tuple,
-        timestamp_to_tuple,
-    )
-except ImportError:
-    from hickory.shared import (
-        HickoryError,
-        strip_number,
-        contains_number,
-        interval_to_tuple,
-        timestamp_to_tuple,
-    )
+from .utils import (
+    HickoryError,
+    strip_number,
+    contains_number,
+    interval_to_tuple,
+    timestamp_to_tuple,
+)
 
 
 def interval_to_seconds(interval):

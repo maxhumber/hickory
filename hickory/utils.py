@@ -11,6 +11,7 @@ def run(command, output=True, silent=False):
         command += " --quiet"
     if output:
         s = subprocess.run(command, capture_output=True, shell=True)
+        subprocess.run("id -u", capture_output=True, shell=True).stdout.decode('utf-8').strip()
         o = s.stdout.decode("utf-8").strip()
         return o
     subprocess.run(command, shell=True)
