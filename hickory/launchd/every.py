@@ -1,35 +1,26 @@
 from itertools import product
-import plistlib
 import re
 
-
-class HickoryError(Exception):
-    pass
-
-
-def strip_number(s):
-    try:
-        return int(re.sub("[^0-9]", "", s))
-    except ValueError:
-        return None
-
-
-def contains_number(string):
-    return bool(strip_number(string))
-
-
-def interval_to_components(interval):
-    c = re.findall(r"[A-Za-z]+|\d+", interval)
-    try:
-        value = int(c[0])
-    except (ValueError, IndexError):
-        raise HickoryError(f"Invalid interval: {interval}") from None
-    unit = "s" if len(c) == 1 else c[1]
-    return value, unit
+try:
+    from ..shared import (
+        HickoryError,
+        strip_number,
+        contains_number,
+        interval_to_tuple,
+        timestamp_to_tuple,
+    )
+except ImportError:
+    from hickory.shared import (
+        HickoryError,
+        strip_number,
+        contains_number,
+        interval_to_tuple,
+        timestamp_to_tuple,
+    )
 
 
 def interval_to_seconds(interval):
-    value, unit = interval_to_components(interval)
+    value, unit = interval_to_tuple(interval)
     if unit in ["s", "sec", "secs", "second", "seconds"]:
         seconds = value
     elif unit in ["m", "min", "mins", "minute", "minutes"]:
@@ -108,29 +99,7 @@ def day_to_list_dict(day):
 
 
 def timestamp_to_dict(t):
-    rt = re.findall(r"[A-Za-z]+|\d+", t)
-    try:
-        hour = int(rt[0])
-    except (ValueError, IndexError):
-        raise HickoryError(f"Invalid time: {t}") from None
-    minute = 0
-    if len(rt) == 2:
-        if rt[1] == "pm":
-            hour += 12
-        elif rt[1] == "am":
-            pass
-        else:
-            minute = int(rt[1])
-    if len(rt) == 3:
-        minute = int(rt[1])
-        if rt[2] == "am":
-            pass
-        elif rt[2] == "pm":
-            hour += 12
-        else:
-            raise HickoryError(f"Invalid time: {t}")
-    if not ((0 <= hour <= 23) and (0 <= minute <= 59)):
-        raise HickoryError(f"Invalid time: {t}")
+    hour, minute = timestamp_to_tuple(t)
     return {"Hour": hour, "Minute": minute}
 
 
@@ -140,7 +109,7 @@ def disjoin(interval):
     except ValueError:
         raise HickoryError(f"Invalid time: {interval}") from None
     days, timestamps = days.split(","), timestamps.split(",")
-    return product(days, timestamps)
+    return list(product(days, timestamps))
 
 
 def start_calendar_interval(interval):

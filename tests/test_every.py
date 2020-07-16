@@ -1,28 +1,5 @@
 import pytest
-from hickory.every import *
-
-
-def test_strip_number():
-    strings = ["1", "1l", "l"]
-    output = [strip_number(s) for s in strings]
-    assert output == [1, 1, None]
-
-
-def test_contains_number():
-    strings = ["1", "1l", "l"]
-    output = [contains_number(s) for s in strings]
-    assert output == [True, True, False]
-
-
-def test_interval_to_components():
-    intervals = ["5", "5s", "5ss", "5s5"]
-    output = [interval_to_components(i) for i in intervals]
-    assert all([len(o) == 2 for o in output])
-
-
-def test_fail_interval_to_components():
-    with pytest.raises(HickoryError):
-        interval_to_components("s5")
+from hickory.launchd import *
 
 
 def test_seconds_interval_to_seconds():
@@ -128,22 +105,34 @@ def test_day_to_list_dict():
 
 
 def test_timestamp_to_dict():
-    times = ["20", "8", "8am", "8:30", "8:30am", "8:30pm", "20:30"]
+    times = [
+        "0:01",
+        "1am",
+        "1:01am",
+        "12:00pm",
+        "12pm",
+        "12:01pm",
+        "1pm",
+        "11pm",
+        "11:59pm",
+    ]
     output = [timestamp_to_dict(t) for t in times]
     assert output == [
-        {"Hour": 20, "Minute": 0},
-        {"Hour": 8, "Minute": 0},
-        {"Hour": 8, "Minute": 0},
-        {"Hour": 8, "Minute": 30},
-        {"Hour": 8, "Minute": 30},
-        {"Hour": 20, "Minute": 30},
-        {"Hour": 20, "Minute": 30},
+        {"Hour": 0, "Minute": 1},
+        {"Hour": 1, "Minute": 0},
+        {"Hour": 1, "Minute": 1},
+        {"Hour": 12, "Minute": 0},
+        {"Hour": 12, "Minute": 0},
+        {"Hour": 12, "Minute": 1},
+        {"Hour": 13, "Minute": 0},
+        {"Hour": 23, "Minute": 0},
+        {"Hour": 23, "Minute": 59},
     ]
 
 
-def test_fail_timestamp_to_dict():
+def test_fail_timestamp_to_tuple():
     with pytest.raises(HickoryError):
-        timestamp_to_dict("30:30")
+        timestamp_to_tuple("30:30")
 
 
 def test_disjoin():
@@ -154,7 +143,7 @@ def test_disjoin():
         "m,t@8:30",
         "th,f@8:30,4:30pm",
     ]
-    output = [list(disjoin(s)) for s in strings]
+    output = [disjoin(s) for s in strings]
     assert output == [
         [("tuesday", "5:30pm")],
         [("", "9:30am")],
