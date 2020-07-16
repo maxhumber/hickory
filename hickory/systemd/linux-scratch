@@ -5,10 +5,8 @@ usermod -aG sudo max
 rsync --archive --chown=max:max ~/.ssh /home/max
 
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
-bash ~/miniconda.sh -b -p $HOME/miniconda
+bash ~/miniconda.sh
 exec bash
-
-# where to put shit?
 
 # folder
 mkdir demo
@@ -24,16 +22,12 @@ print(f"Linux - {time_stamp} + 2 seconds")
 # make the systemd folder
 mkdir -p /home/max/.config/systemd/user/
 
-# make user linger?
-loginctl enable-linger max
-
-
 nano /home/max/.config/systemd/user/hickory_demo.service
 [Unit]
 Description=Hickory Demo
 [Service]
 Type=oneshot
-ExecStart=/home/max/miniconda3/bin/python /home/max/demo/demo.py &>> /home/max/demo/hickory.log
+ExecStart=/home/max/miniconda3/bin/python -u /home/max/demo/demo.py
 
 nano /home/max/.config/systemd/user/hickory_demo.timer
 [Unit]
@@ -45,7 +39,6 @@ AccuracySec=1s
 Persistent=True
 [Install]
 WantedBy=timers.target
-
 
 # https://askubuntu.com/questions/1083537/how-do-i-properly-install-a-systemd-timer-and-service
 systemctl --user daemon-reload
