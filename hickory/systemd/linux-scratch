@@ -34,15 +34,15 @@ Description=Hickory Demo
 [Service]
 Type=oneshot
 ExecStart=/home/max/miniconda3/bin/python /home/max/demo/demo.py &>> /home/max/demo/hickory.log
-Restart=always
 
 nano /home/max/.config/systemd/user/hickory_demo.timer
 [Unit]
 Description=Hickory Demo Timer
 [Timer]
 Unit=hickory_demo.service
+OnCalendar=*:*:0/10
 AccuracySec=1s
-OnUnitInactiveSec=10s
+Persistent=True
 [Install]
 WantedBy=timers.target
 
@@ -53,7 +53,8 @@ systemctl --user enable hickory_demo.timer
 systemctl --user start hickory_demo.timer
 systemctl --user status hickory_demo.timer
 journalctl --user-unit hickory_demo.timer
-
+systemctl --user list-timers
+journalctl -f | grep python
 
 # tear down
 systemctl --user stop hickory_demo.timer
