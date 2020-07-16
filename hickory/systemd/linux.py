@@ -1,4 +1,15 @@
+from pathlib import Path
+import sys
 import configparser
+
+USER_HOME = str(Path.home())
+SYSTEMD_PATH = f"{USER_HOME}/.config/systemd/user"
+HICKORY_SERVICE = "hickory"
+
+which_python = sys.executable
+working_directory = str(Path.cwd())
+platform = sys.platform # 'linux' or 'darwin'
+
 
 ## SERVICE
 

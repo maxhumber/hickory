@@ -1,0 +1,62 @@
+# inspired by; https://github.com/torfsen/python-systemd-tutorial
+
+adduser max
+usermod -aG sudo max
+rsync --archive --chown=max:max ~/.ssh /home/max
+
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+bash ~/miniconda.sh -b -p $HOME/miniconda
+exec bash
+
+# where to put shit?
+
+# folder
+mkdir demo
+
+# script
+nano /home/max/demo/demo.py
+import time
+import datetime
+time_stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+time.sleep(2)
+print(f"Linux - {time_stamp} + 2 seconds")
+
+# make the systemd folder
+mkdir -p /home/max/.config/systemd/user/
+
+# make user linger?
+loginctl enable-linger max
+
+
+nano /home/max/.config/systemd/user/hickory_demo.service
+[Unit]
+Description=Hickory Demo
+[Service]
+Type=oneshot
+ExecStart=/home/max/miniconda3/bin/python /home/max/demo/demo.py &>> /home/max/demo/hickory.log
+Restart=always
+
+nano /home/max/.config/systemd/user/hickory_demo.timer
+[Unit]
+Description=Hickory Demo Timer
+[Timer]
+Unit=hickory_demo.service
+AccuracySec=1s
+OnUnitInactiveSec=10s
+[Install]
+WantedBy=timers.target
+
+
+# https://askubuntu.com/questions/1083537/how-do-i-properly-install-a-systemd-timer-and-service
+systemctl --user daemon-reload
+systemctl --user enable hickory_demo.timer
+systemctl --user start hickory_demo.timer
+systemctl --user status hickory_demo.timer
+journalctl --user-unit hickory_demo.timer
+
+
+# tear down
+systemctl --user stop hickory_demo.timer
+systemctl --user disable hickory_demo.timer
+rm /home/max/.config/systemd/user/hickory_demo.service
+rm /home/max/.config/systemd/user/hickory_demo.timer

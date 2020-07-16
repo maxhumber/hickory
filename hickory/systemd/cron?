@@ -1,0 +1,1 @@
+* * * * * /home/max/miniconda/bin/python -u /home/max/demo/demo.py >> ~/cron.log 2>&1

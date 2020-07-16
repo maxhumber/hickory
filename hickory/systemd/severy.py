@@ -1,4 +1,7 @@
+import re
+
 # Reference:
+# https://linuxconfig.org/how-to-schedule-tasks-with-systemd-timers-in-linux
 # https://wiki.archlinux.org/index.php/Systemd/Timers
 # https://www.freedesktop.org/software/systemd/man/systemd.time.html
 # https://www.freedesktop.org/software/systemd/man/systemd.timer.html#Description
@@ -7,20 +10,34 @@
 # | Interval         |                                             |
 # | ---------------- | ------------------------------------------- |
 # | 10 seconds       | `10`, `10s`, `10sec`, `10secs`, `10seconds` |
-
-[Timer]
-OnUnitActiveSec=10s # OnUnitActiveSec 	Schedule the task relatively to the last time the service unit was active
-AccuracySec=1s
-
 # | 10 minutes       | `10m`, `10min`, `10mins`, `10minutes`       |
-
-[Timer]
-OnUnitActiveSec=10m
-
 # | 10 hours         | `10h`, `10hr`, `10hrs`, `10hours`           |
 
-[Timer]
-OnUnitActiveSec=10h
+def interval_to_components(interval):
+    c = re.findall(r"[A-Za-z]+|\d+", interval)
+    try:
+        value = int(c[0])
+    except (ValueError, IndexError):
+        raise HickoryError(f"Invalid interval: {interval}") from None
+    unit = "s" if len(c) == 1 else c[1]
+    return value, unit
+
+def interval_to_active_sec(interval):
+    # https://www.freedesktop.org/software/systemd/man/systemd.time.html
+    value, unit = interval_to_components(interval)
+    if unit in ["s", "sec", "secs", "second", "seconds"]:
+        unit = "s"
+    elif unit in ["m", "min", "mins", "minute", "minutes"]:
+        unit = "m"
+    elif unit in ["h", "hr", "hrs", "hour", "hours"]:
+        unit = "h"
+    else:
+        raise HickoryError(f"Invalid interval: {interval}")
+    value = "".join([str(value), unit])
+    return {"OnActiveSec": value}
+
+interval_to_active_sec("10hours")
+
 
 # Calendar
 

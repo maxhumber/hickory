@@ -1,4 +1,5 @@
 # Custom
+*.playground
 links.txt
 playground.py
 TODO.txt
