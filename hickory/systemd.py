@@ -61,7 +61,7 @@ def dump_string(config_string, path):
         f.write(config_string)
 
 
-def schedule_sytemd(label, working_directory, which_python, script, interval):
+def schedule_systemd(label, working_directory, which_python, script, interval):
     service = build_service_string(label, working_directory, which_python, script)
     timer = build_timer_string(label, interval)
     Path(SYSTEMD_PATH).mkdir(parents=True, exist_ok=True)
