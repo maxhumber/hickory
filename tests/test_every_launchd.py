@@ -1,5 +1,5 @@
 import pytest
-from hickory.launchd import *
+from hickory.every_launchd import *
 
 
 def test_seconds_interval_to_seconds():
@@ -133,24 +133,6 @@ def test_timestamp_to_dict():
 def test_fail_timestamp_to_tuple():
     with pytest.raises(HickoryError):
         timestamp_to_tuple("30:30")
-
-
-def test_disjoin():
-    strings = [
-        "tuesday@5:30pm",
-        "@9:30am",
-        "@8:30,8:30pm",
-        "m,t@8:30",
-        "th,f@8:30,4:30pm",
-    ]
-    output = [disjoin(s) for s in strings]
-    assert output == [
-        [("tuesday", "5:30pm")],
-        [("", "9:30am")],
-        [("", "8:30"), ("", "8:30pm")],
-        [("m", "8:30"), ("t", "8:30")],
-        [("th", "8:30"), ("th", "4:30pm"), ("f", "8:30"), ("f", "4:30pm")],
-    ]
 
 
 def test_start_calendar_interval():

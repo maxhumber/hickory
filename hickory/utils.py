@@ -1,3 +1,4 @@
+from itertools import product
 import re
 import subprocess
 
@@ -52,13 +53,15 @@ def timestamp_to_tuple(t):
             if hour != 12:
                 hour += 12
         elif rt[1] == "am":
-            pass
+            if hour == 12:
+                hour = 0
         else:
             minute = int(rt[1])
     if len(rt) == 3:
         minute = int(rt[1])
         if rt[2] == "am":
-            pass
+            if hour == 12:
+                hour = 0
         elif rt[2] == "pm":
             if hour != 12:
                 hour += 12
@@ -67,3 +70,12 @@ def timestamp_to_tuple(t):
     if not ((0 <= hour <= 23) and (0 <= minute <= 59)):
         raise HickoryError(f"Invalid time: {t}")
     return hour, minute
+
+
+def disjoin(interval):
+    try:
+        days, timestamps = interval.split("@")
+    except ValueError:
+        raise HickoryError(f"Invalid time: {interval}") from None
+    days, timestamps = days.split(","), timestamps.split(",")
+    return list(product(days, timestamps))

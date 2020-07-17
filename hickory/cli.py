@@ -10,6 +10,18 @@ from .systemd import schedule_systemd, kill_systemd, status_systemd
 
 
 def schedule(script, every):
+    """Schedule a Python script to repeat <every>
+
+    Params:
+    - script: a Python file
+    - every: an "every" interval
+
+    Examples:
+    ```
+    hickory schedule foo.py 10m
+    hickory schedule foo.py --every=m,t@10:10am
+    ```
+    """
     if not Path(script).exists():
         raise FileNotFoundError(script)
 
@@ -21,12 +33,23 @@ def schedule(script, every):
     if sys.platform == "darwin":
         schedule_launchd(label, working_directory, which_python, script, every)
     elif sys.platform == "linux":
-        schedule_sytemd(label, working_directory, which_python, script, interval)
+        schedule_sytemd(label, working_directory, which_python, script, every)
     else:
         raise OSError("Operating System Not Supported")
 
 
 def kill(id_or_script):
+    """Stop and delete a schedule for a Python script
+
+    Params:
+    - id_or_script: schedule id or Python script
+
+    Examples:
+    ```
+    hickory kill foo.py
+    hickory kill 8ae4f2
+    ```
+    """
     if sys.platform == "darwin":
         kill_launchd(id_or_script)
     elif sys.platform == "linux":
@@ -36,6 +59,13 @@ def kill(id_or_script):
 
 
 def status():
+    """Check the status of all scheduled Python scripts
+
+    Example:
+    ```
+    hickory status
+    ```
+    """
     if sys.platform == "darwin":
         return status_launchd()
     elif sys.platform == "linux":

@@ -108,32 +108,32 @@ Repeat to schedule input:
 
 Schedule arguments:
 
-| Interval         |                                             |
-| ---------------- | ------------------------------------------- |
-| 10 seconds       | `10`, `10s`, `10sec`, `10secs`, `10seconds` |
-| 10 minutes       | `10m`, `10min`, `10mins`, `10minutes`       |
-| 10 hours         | `10h`, `10hr`, `10hrs`, `10hours`           |
-| **Time**         |                                             |
-| 10:00 AM         | `@10`, `@10am`                              |
-| 10:00 PM         | `@22`, `@10pm`                              |
-| 10:10 AM         | `@10:10`, `@10:10am`                        |
-| 10:10 PM         | `@22:10`, `@10:10pm`                        |
-| **Weekday**      |                                             |
-| Monday           | `m@`, `mon@`, `monday@`                     |
-| Tuesday          | `t@`, `tue@`, `tues@`, `tuesday@`           |
-| Wednesday        | `w@`, `wed@`, `weds@`, `wednesday@`         |
-| Thursday         | `th@`, `thur@`, `thurs@`, `thursday@`       |
-| Friday           | `f@`, `fri@`, `friday@`                     |
-| Saturday         | `s@`, `sat@`, `saturday@`                   |
-| Sunday           | `su@`, `sun@`, `sunday@`                    |
-| **Calendar Day** |                                             |
-| 1st              | `1@`, `1st@`                                |
-| 2nd              | `2@`, `2nd@`                                |
-| 3rd              | `3@`, `3rd@`                                |
-| 4th              | `4@`, `4th@`                                |
-| 15th             | `15@`, `15th@`                              |
-| 31st             | `31@`, `31st@`                              |
-| **Other Day**    |                                             |
-| Every Day        | `day@`                                      |
-| Every Weekday    | `weekday@`                                  |
-| End of Month     | `eom@`                                      |
+| Interval         |                                               |
+| ---------------- | --------------------------------------------- |
+| 10 seconds       | `10`, `10s`, `10sec`, `10secs`, `10seconds`   |
+| 10 minutes       | `10m`, `10min`, `10mins`, `10minutes`         |
+| 10 hours         | `10h`, `10hr`, `10hrs`, `10hours`             |
+| **Time**         |                                               |
+| 10:00 AM         | `@10`, `@10am`                                |
+| 10:00 PM         | `@22`, `@10pm`                                |
+| 10:10 AM         | `@10:10`, `@10:10am`                          |
+| 10:10 PM         | `@22:10`, `@10:10pm`                          |
+| **Weekday**      |                                               |
+| Monday           | `m@`, `mon@`, `monday@`                       |
+| Tuesday          | `t@`, `tue@`, `tues@`, `tuesday@`             |
+| Wednesday        | `w@`, `wed@`, `weds@`, `wednesday@`           |
+| Thursday         | `th@`, `thu@`, `thur@`, `thurs@`, `thursday@` |
+| Friday           | `f@`, `fri@`, `friday@`                       |
+| Saturday         | `s@`, `sat@`, `saturday@`                     |
+| Sunday           | `su@`, `sun@`, `sunday@`                      |
+| **Calendar Day** |                                               |
+| 1st              | `1@`, `1st@`                                  |
+| 2nd              | `2@`, `2nd@`                                  |
+| 3rd              | `3@`, `3rd@`                                  |
+| 4th              | `4@`, `4th@`                                  |
+| 15th             | `15@`, `15th@`                                |
+| 31st             | `31@`, `31st@`                                |
+| **Other Day**    |                                               |
+| Every Day        | `day@`                                        |
+| Every Weekday    | `weekday@`                                    |
+| End of Month     | `eom@`                                        |

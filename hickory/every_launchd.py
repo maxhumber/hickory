@@ -1,4 +1,3 @@
-from itertools import product
 import re
 
 from .utils import (
@@ -7,6 +6,7 @@ from .utils import (
     contains_number,
     interval_to_tuple,
     timestamp_to_tuple,
+    disjoin
 )
 
 
@@ -34,7 +34,7 @@ def day_to_weekday_dict(day):
         day_number = 2
     elif day in ["w", "wed", "weds", "wednesday"]:
         day_number = 3
-    elif day in ["th", "thur", "thurs", "thursday"]:
+    elif day in ["th", "thu", "thur", "thurs", "thursday"]:
         day_number = 4
     elif day in ["f", "fri", "friday"]:
         day_number = 5
@@ -92,15 +92,6 @@ def day_to_list_dict(day):
 def timestamp_to_dict(t):
     hour, minute = timestamp_to_tuple(t)
     return {"Hour": hour, "Minute": minute}
-
-
-def disjoin(interval):
-    try:
-        days, timestamps = interval.split("@")
-    except ValueError:
-        raise HickoryError(f"Invalid time: {interval}") from None
-    days, timestamps = days.split(","), timestamps.split(",")
-    return list(product(days, timestamps))
 
 
 def start_calendar_interval(interval):
