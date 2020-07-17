@@ -74,7 +74,12 @@ def schedule_systemd(label, working_directory, which_python, script, interval):
 
 def status_systemd():
     return "TODO"
-    # return (systemctl --user status hickory_demo.timer)
+    # cd /home/max/.config/systemd/user                      # stuff is going to be in here
+    # systemctl --user status hickory.0d99e7.demo.py         # shows last log
+    # systemctl --user status hickory.0d99e7.demo.py.timer   # shows if still active
+    # journalctl --user-unit hickory.0d99e7.demo.py          # shows full logs ... timer doesn't work
+    # systemctl --user list-timers                           # shows active list
+    # journalctl -f | grep python
 
 
 def kill_systemd(id_or_script):
