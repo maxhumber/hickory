@@ -33,7 +33,7 @@ def schedule(script, every):
     if sys.platform == "darwin":
         schedule_launchd(label, working_directory, which_python, script, every)
     elif sys.platform == "linux":
-        schedule_sytemd(label, working_directory, which_python, script, every)
+        schedule_systemd(label, working_directory, which_python, script, every)
     else:
         raise OSError("Operating System Not Supported")
 
