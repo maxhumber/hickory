@@ -36,6 +36,12 @@
 pip install hickory
 ```
 
+The development version can be installed with:
+
+```sh
+pip install git+https://github.com/maxhumber/hickory
+```
+
 
 
 ### Quickstart
