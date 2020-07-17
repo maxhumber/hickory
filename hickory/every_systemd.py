@@ -1,14 +1,23 @@
 import re
 
-def interval_to_tuple(interval):
-    # same as launchd
-    c = re.findall(r"[A-Za-z]+|\d+", interval)
-    try:
-        value = int(c[0])
-    except (ValueError, IndexError):
-        raise HickoryError(f"Invalid interval: {interval}") from None
-    unit = "s" if len(c) == 1 else c[1]
-    return value, unit
+try:
+    from .utils import (
+        HickoryError,
+        strip_number,
+        contains_number,
+        interval_to_tuple,
+        timestamp_to_tuple,
+    )
+except ImportError:
+    from hickory.utils import (
+        HickoryError,
+        strip_number,
+        contains_number,
+        interval_to_tuple,
+        timestamp_to_tuple,
+    )
+
+# for time intervals
 
 def interval_to_oncalendar(interval):
     value, unit = interval_to_tuple(interval)
@@ -22,9 +31,9 @@ def interval_to_oncalendar(interval):
         raise HickoryError(f"Invalid interval: {interval}")
     return {"OnCalendar": string}
 
-interval_to_active_sec("10seconds")
-interval_to_active_sec("10minutes")
-interval_to_active_sec("10hours")
+interval_to_oncalendar("10seconds")
+interval_to_oncalendar("10minutes")
+interval_to_oncalendar("10hours")
 
 # Calendar
 
@@ -35,32 +44,9 @@ interval_to_active_sec("10hours")
 # | 10:10 PM         | `@22:10`, `@10:10pm`                        |
 
 t = '12:01pm'
-def timestamp_to_string(t):
-    rt = re.findall(r"[A-Za-z]+|\d+", t)
-    try:
-        hour = int(rt[0])
-    except (ValueError, IndexError):
-        raise HickoryError(f"Invalid time: {t}") from None
-    minute = 0
-    if len(rt) == 2:
-        if rt[1] == "pm":
-            hour += 12
-        elif rt[1] == "am":
-            pass
-        else:
-            minute = int(rt[1])
-    if len(rt) == 3:
-        minute = int(rt[1])
-        if rt[2] == "am":
-            pass
-        elif (rt[2] == "pm") & (rt[0] != "12"):
-            hour += 12
-        else:
-            raise HickoryError(f"Invalid time: {t}")
-    if not ((0 <= hour <= 23) and (0 <= minute <= 59)):
-        raise HickoryError(f"Invalid time: {t}")
-    return f'{hour}:{minute}:00'
+hour, minute = timestamp_to_tuple(t)
 
+f'{str(hour).zfill(2)}:{str(minute).zfill(2)}:00'
 
 
 # FORMAT

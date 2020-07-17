@@ -41,7 +41,7 @@ def _info_from_path(path):
         "file": ".".join(split[2:]),
         "runs": re.findall("runs = (.*?)\n", info)[0],
         "state": state,
-        "interval": interval
+        "interval": interval,
     }
 
 

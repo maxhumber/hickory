@@ -2,16 +2,17 @@
   <img src="https://raw.githubusercontent.com/maxhumber/hickory/master/logo/hickory.png" width="125px" alt="hickory">
 </h3>
 <p align="center">
-  <a href="https://github.com/maxhumber/hickory"><img alt="GitHub" src="https://img.shields.io/github/license/maxhumber/hickory"></a>
   <a href="https://travis-ci.org/maxhumber/hickory"><img alt="Travis" src="https://img.shields.io/travis/maxhumber/hickory.svg"></a>
+  <a href="https://pypi.python.org/pypi/hickory"><img alt="Release" src="https://img.shields.io/badge/release-beta-yellow"></a>
   <a href="https://pypi.python.org/pypi/hickory"><img alt="PyPI" src="https://img.shields.io/pypi/v/hickory.svg"></a>
   <a href="https://pepy.tech/project/hickory"><img alt="Downloads" src="https://pepy.tech/badge/hickory"></a>
 </p>
 
 
+
 ### About
 
-`hickory` is a command line tool for scheduling Python scripts. Though not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler, it's perfect for most stand-alone jobs.
+`hickory` is a command line tool for scheduling Python scripts. Though not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler, it's well-suited for most tasks.
 
 
 
@@ -22,7 +23,7 @@
 | Operating System | Scheduler                                        |
 | ---------------- | ------------------------------------------------ |
 | macOS            | [launchd](https://en.wikipedia.org/wiki/Launchd) |
-| Linux            | ❌                                                |
+| Linux            | [systemd](https://en.wikipedia.org/wiki/Systemd) |
 | Windows          | ❌                                                |
 
 
@@ -64,16 +65,26 @@ Check the execution status of `foo.py`:
 hickory status
 ```
 
-Check the `stdout` and `stderr` logs for the `foo.py` script:
-
-```
-tail -f hickory.log
-```
-
 Kill (stop and delete) the schedule for `foo.py`:
 
 ```sh
 hickory kill foo.py
+```
+
+
+
+### Logs
+
+macOS - logs are stored in the same directory as the scheduled script:
+
+```sh
+tail -f hickory.log
+```
+
+Linux - logs are written to the journal:
+
+```sh
+journalctl -f
 ```
 
 
