@@ -79,8 +79,7 @@ def status_systemd():
 
 def kill_systemd(id_or_script):
     for path in Path(SYSTEMD_PATH).glob(f"{HICKORY_SERVICE}*{id_or_script}*"):
-        # path = f'{SYSTEMD_PATH}/hickory.7633.foo.py.timer'
-        file = path.split("/")[-1]
+        file = str(path).split("/")[-1]
         if file.endswith("timer"):
             run(f"systemctl --user stop {file}")
             run(f"systemctl --user disable {file}")
