@@ -6,8 +6,9 @@ from .utils import (
     contains_number,
     interval_to_tuple,
     timestamp_to_tuple,
-    disjoin
+    disjoin,
 )
+
 
 def interval_to_on_calendar_strings(interval):
     value, unit = interval_to_tuple(interval)
@@ -64,7 +65,7 @@ def day_to_on_calendar_string(day):
 
 def timestamp_to_on_calendar_string(t):
     hour, minute = timestamp_to_tuple(t)
-    string = f'{str(hour).zfill(2)}:{str(minute).zfill(2)}:00'
+    string = f"{str(hour).zfill(2)}:{str(minute).zfill(2)}:00"
     return string
 
 

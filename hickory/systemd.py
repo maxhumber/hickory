@@ -17,7 +17,7 @@ def config_to_string(config):
 
 
 def add_on_calendar_strings(string, interval):
-    split = string.split('\n\n')
+    split = string.split("\n\n")
     timer_section = split[1]
     on_calendars = every(interval)
     new_timer_section = timer_section

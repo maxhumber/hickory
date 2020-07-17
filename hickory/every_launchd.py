@@ -6,7 +6,7 @@ from .utils import (
     contains_number,
     interval_to_tuple,
     timestamp_to_tuple,
-    disjoin
+    disjoin,
 )
 
 
