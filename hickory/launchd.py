@@ -90,12 +90,14 @@ def status_launchd():
     for path in Path(LAUNCHD_PATH).glob(f"*{HICKORY_SERVICE}*"):
         info = _info_from_path(path)
         info_dicts.append(info)
-    spacer = 2
-    maxlens = find_maxlens(info_dicts)
-    keys = ["id", "file", "state", "runs", "interval"]
-    strings = build_strings(keys, info_dicts, maxlens, spacer)
-    terminal_string = build_terminal_string(keys, strings, maxlens, spacer)
-    return terminal_string
+    if info_dicts:
+        spacer = 2
+        maxlens = find_maxlens(info_dicts)
+        keys = ["id", "file", "state", "runs", "interval"]
+        strings = build_strings(keys, info_dicts, maxlens, spacer)
+        return build_terminal_string(keys, strings, maxlens, spacer)
+    else:
+        return "No running scripts"
 
 
 def kill_launchd(id_or_script):

@@ -1,8 +1,7 @@
+import argparse
 import sys
 from pathlib import Path
 from uuid import uuid4
-
-from fire import Fire
 
 from .constants import HICKORY_SERVICE
 from .launchd import schedule_launchd, kill_launchd, status_launchd
@@ -18,7 +17,7 @@ def schedule(script, every):
 
     Examples:
     ```
-    hickory schedule foo.py 10m
+    hickory schedule foo.py --every=10m
     hickory schedule foo.py --every=m,t@10:10am
     ```
     """
@@ -75,7 +74,19 @@ def status():
 
 
 def main():
-    Fire({"schedule": schedule, "status": status, "kill": kill})
+    parser = argparse.ArgumentParser()
+    parser.add_argument("function", choices=("schedule", "status", "kill"))
+    parser.add_argument("script", nargs="?")
+    parser.add_argument("-e", "--every", nargs="?")
+    args = parser.parse_args()
+    if args.function == "schedule" and args.script and args.every:
+        schedule(args.script, args.every)
+        print(f"Scheduled {args.script}")
+    if args.function == "status":
+        return status()
+    if args.function == "kill" and args.script:
+        kill(args.script)
+        print(f"Killed {args.script}")
 
 
 if __name__ == "__main__":

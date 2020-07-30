@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="hickory",
-    version="0.6.0",
+    version="0.9.0",
     description="The command line tool for scheduling Python scripts",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -23,7 +23,6 @@ setup(
     author_email="max.humber@gmail.com",
     license="MIT",
     packages=["hickory"],
-    install_requires=["fire"],
     entry_points={"console_scripts": ["hickory=hickory.cli:main"]},
     python_requires=">=3.6",
     setup_requires=["setuptools>=38.6.0"],
