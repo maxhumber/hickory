@@ -51,12 +51,50 @@ def schedule_launchd(label, working_directory, which_python, script, interval):
     run(f"launchctl load {path}")
 
 
+def find_maxlens(info_dicts):
+    keys = info_dicts[0].keys()
+    maxlens = {key: len(key) for key in keys}
+    for info in info_dicts:
+        for key in keys:
+            current = maxlens[key]
+            new = len(str(info[key]))
+            if current < new:
+                maxlens[key] = new
+    return maxlens
+
+
+def build_strings(keys, info_dicts, maxlens, spacer=2):
+    strings = []
+    for info in info_dicts:
+        string = ""
+        for key in keys:
+            value = info[key]
+            string_part = str(value).ljust(maxlens[key])
+            string += string_part + " " * spacer
+        strings.append(string.strip())
+    return strings
+
+
+def build_terminal_string(keys, strings, maxlens, spacer=2):
+    terminal_string = ""
+    for key in keys:
+        string_part = key.ljust(maxlens[key])
+        terminal_string += string_part + " " * spacer
+    terminal_string = terminal_string.upper().strip() + "\n"
+    terminal_string += "\n".join(strings)
+    return terminal_string
+
+
 def status_launchd():
-    terminal_string = "id     - file   - state   - runs - interval".upper()
+    info_dicts = []
     for path in Path(LAUNCHD_PATH).glob(f"*{HICKORY_SERVICE}*"):
-        i = _info_from_path(path)
-        s = f"\n{i['id']} - {i['file']} - {i['state']} - {i['runs']} - {i['interval']}"
-        terminal_string = terminal_string + s
+        info = _info_from_path(path)
+        info_dicts.append(info)
+    spacer = 2
+    maxlens = find_maxlens(info_dicts)
+    keys = ["id", "file", "state", "runs", "interval"]
+    strings = build_strings(keys, info_dicts, maxlens, spacer)
+    terminal_string = build_terminal_string(keys, strings, maxlens, spacer)
     return terminal_string
 
 

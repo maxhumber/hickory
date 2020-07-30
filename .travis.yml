@@ -1,18 +1,29 @@
 matrix:
   include:
-    - os: osx
+    - name: Python 3.7 on macOS Catalina
+      os: osx
       osx_image: xcode12
+      before_install:
+        - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh;
+        - bash miniconda.sh -b -p $HOME/miniconda
+        - source $HOME/miniconda/bin/activate
+        - conda init zsh
+      script:
+        - pytest tests/generic tests/macOS
+    - name: Python 3.7 on Ubuntu 18.04
+      os: linux
+      dist: bionic
+      before_install:
+        - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+        - bash ~/miniconda.sh -b -p $HOME/miniconda
+        - source $HOME/miniconda/bin/activate
+        - conda init
+      script:
+        - pytest tests/generic tests/linux
 
 install:
-  - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh;
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - source $HOME/miniconda/bin/activate
-  - conda init zsh
   - pip install pytest
   - pip install -e .
-
-script:
-  - pytest
 
 deploy:
   provider: pypi

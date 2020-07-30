@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 setup(
     name="hickory",
     version="0.6.0",
-    description="🕰 The command line tool for scheduling Python scripts",
+    description="The command line tool for scheduling Python scripts",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
@@ -15,7 +15,7 @@ setup(
         "Topic :: Office/Business :: Scheduling",
         "Topic :: Terminals",
         "Operating System :: MacOS",
-        "Operating System :: POSIX :: Linux"
+        "Operating System :: POSIX :: Linux",
     ],
     keywords=["schedule", "scheduling", "launchd", "systemd"],
     url="https://github.com/maxhumber/hickory",

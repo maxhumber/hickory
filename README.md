@@ -3,22 +3,20 @@
 </h3>
 <p align="center">
   <a href="https://travis-ci.org/maxhumber/hickory"><img alt="Travis" src="https://img.shields.io/travis/maxhumber/hickory.svg"></a>
-  <a href="https://pypi.python.org/pypi/hickory"><img alt="Release" src="https://img.shields.io/badge/release-beta-yellow"></a>
   <a href="https://pypi.python.org/pypi/hickory"><img alt="PyPI" src="https://img.shields.io/pypi/v/hickory.svg"></a>
   <a href="https://pepy.tech/project/hickory"><img alt="Downloads" src="https://pepy.tech/badge/hickory"></a>
 </p>
 
 
 
+
 ### About
 
-`hickory` is a command line tool for scheduling Python scripts. Though not a replacement for a Directed Acyclic Graph (DAG) workflow scheduler, it's well-suited for most tasks.
+`hickory` is a simple command line tool for scheduling Python scripts.
 
 
 
 ### Support
-
-`hickory` currently supports:
 
 | Operating System | Scheduler                                        |
 | ---------------- | ------------------------------------------------ |
@@ -30,26 +28,17 @@
 
 ### Install
 
-`hickory` is installed at the command line:
-
 ```sh
 pip install hickory
-```
-
-The development version can be installed with:
-
-```sh
-pip install git+https://github.com/maxhumber/hickory
 ```
 
 
 
 ### Quickstart
 
-Create a python script called `foo.py`:
+Create a file called `foo.py`:
 
 ```python
-# foo.py
 import datetime
 import time
 
@@ -65,13 +54,13 @@ Schedule `foo.py` to execute every ten minutes:
 hickory schedule foo.py --every=10minutes
 ```
 
-Check the execution status of `foo.py`:
+Check the status of all queued schedules:
 
 ```sh
 hickory status
 ```
 
-Kill (stop and delete) the schedule for `foo.py`:
+Stop and delete the schedule for `foo.py`:
 
 ```sh
 hickory kill foo.py
@@ -95,9 +84,7 @@ journalctl -f
 
 
 
-### `every` Examples
-
-Repeat to schedule input:
+### `--every` Examples
 
 | Repeat                                                  |                          |
 | ------------------------------------------------------- | ------------------------ |
@@ -110,9 +97,7 @@ Repeat to schedule input:
 
 
 
-### `every` Table
-
-Schedule arguments:
+### `--every` Table
 
 | Interval         |                                               |
 | ---------------- | --------------------------------------------- |
