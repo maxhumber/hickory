@@ -22,7 +22,7 @@ matrix:
         - pytest tests/generic tests/linux
 
 install:
-  - pip install pytest
+  - pip install pytest pytest-cov codecov
   - pip install -e .
 
 deploy:

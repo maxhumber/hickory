@@ -97,7 +97,7 @@ def status_launchd():
         strings = build_strings(keys, info_dicts, maxlens, spacer)
         return build_terminal_string(keys, strings, maxlens, spacer)
     else:
-        return "No running scripts"
+        return "No running scripts..."
 
 
 def kill_launchd(id_or_script):
