@@ -28,7 +28,8 @@ def test_cli_systemd():
     subprocess.run("hickory schedule foo.py --every=5seconds", shell=True)
     status = subprocess.run("hickory status", shell=True, capture_output=True).stderr.decode()
     assert 'foo.py' in status.split('\n')[1]
-    time.sleep(5)
+    time.sleep(8)
+    lines = subprocess.run('journalctl | grep Starting | grep hickory | wc -l', shell=True, capture_output=True)
+    assert int(lines.stdout.decode()) > 0
     subprocess.run("hickory kill foo.py", shell=True)
-    assert (Path.cwd() / "hickory.log").exists()
     teardown()
