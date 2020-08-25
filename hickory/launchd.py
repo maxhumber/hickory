@@ -4,6 +4,7 @@ import re
 
 from .constants import HICKORY_SERVICE, LAUNCHD_PATH
 from .every_launchd import every
+from .format_status import format_status
 from .utils import run
 
 
@@ -27,7 +28,7 @@ def _dump_dict(ldd):
     return path
 
 
-def _info_from_path(path):
+def _service_info(path):
     with open(path, "rb") as f:
         ldd = plistlib.load(f)
     script = ldd["Label"]
@@ -51,51 +52,14 @@ def schedule_launchd(label, working_directory, which_python, script, interval):
     run(f"launchctl load {path}")
 
 
-def find_maxlens(info_dicts):
-    keys = info_dicts[0].keys()
-    maxlens = {key: len(key) for key in keys}
-    for info in info_dicts:
-        for key in keys:
-            current = maxlens[key]
-            new = len(str(info[key]))
-            if current < new:
-                maxlens[key] = new
-    return maxlens
-
-
-def build_strings(keys, info_dicts, maxlens, spacer=2):
-    strings = []
-    for info in info_dicts:
-        string = ""
-        for key in keys:
-            value = info[key]
-            string_part = str(value).ljust(maxlens[key])
-            string += string_part + " " * spacer
-        strings.append(string.strip())
-    return strings
-
-
-def build_terminal_string(keys, strings, maxlens, spacer=2):
-    terminal_string = ""
-    for key in keys:
-        string_part = key.ljust(maxlens[key])
-        terminal_string += string_part + " " * spacer
-    terminal_string = terminal_string.upper().strip() + "\n"
-    terminal_string += "\n".join(strings)
-    return terminal_string
-
-
 def status_launchd():
-    info_dicts = []
+    paths = []
     for path in Path(LAUNCHD_PATH).glob(f"*{HICKORY_SERVICE}*"):
-        info = _info_from_path(path)
-        info_dicts.append(info)
+        paths.append(path)
+    info_dicts = [_service_info(path) for path in paths]
     if info_dicts:
-        spacer = 2
-        maxlens = find_maxlens(info_dicts)
-        keys = ["id", "file", "state", "runs", "interval"]
-        strings = build_strings(keys, info_dicts, maxlens, spacer)
-        return build_terminal_string(keys, strings, maxlens, spacer)
+        status = format_status(info_dicts)
+        return status
     else:
         return "No running scripts..."
 

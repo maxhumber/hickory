@@ -2,10 +2,15 @@ from configparser import ConfigParser
 import io
 from pathlib import Path
 import sys
+import re
+import subprocess
 
 from .constants import HICKORY_SERVICE, SYSTEMD_PATH
 from .every_systemd import every
 from .utils import run
+
+
+HOME = str(Path.home())
 
 
 def config_to_string(config):
@@ -72,14 +77,57 @@ def schedule_systemd(label, working_directory, which_python, script, interval):
     run(f"systemctl --user start {label}.timer")
 
 
+def _find_all_hickory_services():
+    services = []
+    for path in Path(SYSTEMD_PATH).glob(f"*{HICKORY_SERVICE}*service"):
+        services.append(path)
+    return [str(s) for s in services]
+
+
+def _find_interval(service):
+    timer = subprocess.run(f"cat {service.replace('.service', '.timer')}", shell=True, capture_output=True)
+    timer = timer.stdout.decode()
+    interval = re.findall("OnCalendar=(.*?)\n", timer)[0]
+    return interval
+
+
+def _extract_metadata(service):
+    short = service.split('.service')[0].split('user/')[-1]
+    _, id, file, extension = short.split('.')
+    script = f'{file}.{extension}'
+    return short, id, script
+
+
+def _find_state(short):
+    output = subprocess.run(f'systemctl --user status {short}.timer', shell=True, capture_output=True)
+    status = output.stdout.decode('utf-8')
+    state = re.findall("Active: (.*?)\n", status)[0]
+    state = state.split(' since ')[0]
+    return state
+
+
+def _find_runs(id):
+    output = subprocess.run(f'journalctl | grep Starting | grep {id} | wc -l', shell=True, capture_output=True)
+    runs = output.stdout.decode('utf-8').strip()
+    return runs
+
+
+def _service_info(service):
+    short, id, file = _extract_metadata(service)
+    state = _find_state(short)
+    runs = _find_runs(id)
+    interval = _find_interval(service)
+    return {'id': id, 'file': file, 'state': state, 'runs': runs, 'interval': interval}
+
+
 def status_systemd():
-    return "TODO"
-    # cd /home/max/.config/systemd/user                      # stuff is going to be in here
-    # systemctl --user status hickory.0d99e7.demo.py         # shows last log
-    # systemctl --user status hickory.0d99e7.demo.py.timer   # shows if still active
-    # journalctl --user-unit hickory.0d99e7.demo.py          # shows full logs ... timer doesn't work
-    # systemctl --user list-timers                           # shows active list
-    # journalctl -f | grep python
+    services = _find_all_hickory_services()
+    info_dicts = [_service_info(s) for s in services]
+    if info_dicts:
+        status = format_status(info_dicts)
+        return status
+    else:
+        return "No running scripts..."
 
 
 def kill_systemd(id_or_script):

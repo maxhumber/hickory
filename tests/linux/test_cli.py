@@ -23,7 +23,7 @@ def teardown():
     subprocess.run("rm foo.py hickory.log", shell=True)
 
 
-def test_cli_launchd():
+def test_cli_systemd():
     setup()
     subprocess.run("hickory schedule foo.py --every=5seconds", shell=True)
     status = subprocess.run("hickory status", shell=True, capture_output=True).stderr.decode()
