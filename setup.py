@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="hickory",
-    version="0.9.0",
+    version="1.0.0",
     description="The command line tool for scheduling Python scripts",
     long_description=long_description,
     long_description_content_type="text/markdown",

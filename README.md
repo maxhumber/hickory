@@ -36,6 +36,8 @@ pip install hickory
 
 ### Quickstart
 
+<a href="https://asciinema.org/a/355543" target="_blank"><img src="https://asciinema.org/a/355543.svg" /></a>
+
 Create a file called `foo.py`:
 
 ```python
