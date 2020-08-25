@@ -7,6 +7,7 @@ import subprocess
 
 from .constants import HICKORY_SERVICE, SYSTEMD_PATH
 from .every_systemd import every
+from .format_status import format_status
 from .utils import run
 
 
