@@ -1,4 +1,5 @@
 import pytest
+
 from hickory.every_launchd import *
 
 

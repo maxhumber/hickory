@@ -1,16 +1,17 @@
 import re
+from typing import Any, Dict, List, Union
 
 from .utils import (
     HickoryError,
-    strip_number,
     contains_number,
-    interval_to_tuple,
-    timestamp_to_tuple,
     disjoin,
+    interval_to_tuple,
+    strip_number,
+    timestamp_to_tuple,
 )
 
 
-def interval_to_seconds(interval):
+def interval_to_seconds(interval: str) -> int:
     value, unit = interval_to_tuple(interval)
     if unit in ["s", "sec", "secs", "second", "seconds"]:
         seconds = value
@@ -23,11 +24,11 @@ def interval_to_seconds(interval):
     return seconds
 
 
-def start_interval(interval):
+def start_interval(interval: str) -> Dict[str, int]:
     return {"StartInterval": interval_to_seconds(interval)}
 
 
-def day_to_weekday_dict(day):
+def day_to_weekday_dict(day: str) -> Dict[str, int]:
     if day in ["m", "mon", "monday"]:
         day_number = 1
     elif day in ["t", "tue", "tues", "tuesday"]:
@@ -47,18 +48,19 @@ def day_to_weekday_dict(day):
     return {"Weekday": day_number}
 
 
-def day_to_calendar_day_dict(day):
+def day_to_calendar_day_dict(day: str) -> Dict[str, int]:
     number = strip_number(day)
+    assert isinstance(number, int)
     if not (1 <= number <= 31):
         raise HickoryError(f"Invalid calendar day: {day}")
     return {"Day": number}
 
 
-def weekday_list_dict():
+def weekday_list_dict() -> List[Dict[str, int]]:
     return [{"Weekday": i} for i in range(1, 5 + 1)]
 
 
-def eom_list_dict():
+def eom_list_dict() -> List[Dict[str, int]]:
     eom_days = [
         (1, 31),
         (2, 28),
@@ -76,7 +78,7 @@ def eom_list_dict():
     return [{"Day": day, "Month": month} for month, day in eom_days]
 
 
-def day_to_list_dict(day):
+def day_to_list_dict(day: str) -> List[Dict[Any, Any]]:
     if day in ["", "day"]:
         return [{}]
     elif day == "weekday":
@@ -89,20 +91,20 @@ def day_to_list_dict(day):
         return [day_to_weekday_dict(day)]
 
 
-def timestamp_to_dict(t):
+def timestamp_to_dict(t: str) -> Dict[str, int]:
     hour, minute = timestamp_to_tuple(t)
     return {"Hour": hour, "Minute": minute}
 
 
-def start_calendar_interval(interval):
-    blocks = []
+def start_calendar_interval(interval: str) -> Dict[str, Any]:
+    blocks: List[Dict[str, int]] = []
     for day, timestamp in disjoin(interval):
-        days = day_to_list_dict(day)
-        timestamp = timestamp_to_dict(timestamp)
-        for day in days:
-            block = {}
-            block.update(day)
-            block.update(timestamp)
+        days_list_dict = day_to_list_dict(day)
+        timestamp_dict = timestamp_to_dict(timestamp)
+        for day_dict in days_list_dict:
+            block: Dict[str, int] = {}
+            block.update(day_dict)
+            block.update(timestamp_dict)
             blocks.append(block)
     if len(blocks) > 1:
         value = blocks
@@ -111,7 +113,7 @@ def start_calendar_interval(interval):
     return {"StartCalendarInterval": value}
 
 
-def every(interval):
+def every(interval: str) -> Dict[str, Any]:
     interval = str(interval).lower()
     if "@" not in interval:
         return start_interval(interval)

@@ -4,11 +4,11 @@ from pathlib import Path
 from uuid import uuid4
 
 from .constants import HICKORY_SERVICE
-from .launchd import schedule_launchd, kill_launchd, status_launchd
-from .systemd import schedule_systemd, kill_systemd, status_systemd
+from .launchd import kill_launchd, schedule_launchd, status_launchd
+from .systemd import kill_systemd, schedule_systemd, status_systemd
 
 
-def schedule(script, every):
+def schedule(script: str, every: str) -> None:
     """Schedule a Python script to repeat <every>
 
     Params:
@@ -37,7 +37,7 @@ def schedule(script, every):
         raise OSError("Operating System Not Supported")
 
 
-def kill(id_or_script):
+def kill(id_or_script: str) -> None:
     """Stop and delete a schedule for a Python script
 
     Params:
@@ -57,7 +57,7 @@ def kill(id_or_script):
         raise OSError("Operating System Not Supported")
 
 
-def status():
+def status() -> None:
     """Check the status of all scheduled Python scripts
 
     Example:

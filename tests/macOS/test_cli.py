@@ -1,11 +1,13 @@
 import os
-from pathlib import Path
-import sys
-import pytest
-import time
 import subprocess
+import sys
+import time
+from pathlib import Path
+
+import pytest
 
 os.chdir("tests")
+
 
 def setup():
     foo = """import datetime
@@ -26,8 +28,10 @@ def teardown():
 def test_cli_launchd():
     setup()
     subprocess.run("hickory schedule foo.py --every=5seconds", shell=True)
-    status = subprocess.run("hickory status", shell=True, capture_output=True).stderr.decode()
-    assert 'foo.py' in status.split('\n')[1]
+    status = subprocess.run(
+        "hickory status", shell=True, capture_output=True
+    ).stderr.decode()
+    assert "foo.py" in status.split("\n")[1]
     time.sleep(5)
     subprocess.run("hickory kill foo.py", shell=True)
     assert (Path.cwd() / "hickory.log").exists()
