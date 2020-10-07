@@ -78,7 +78,7 @@ def eom_list_dict() -> List[Dict[str, int]]:
     return [{"Day": day, "Month": month} for month, day in eom_days]
 
 
-def day_to_list_dict(day: str) -> List[Dict[Any, Any]]:
+def day_to_list_dict(day: str) -> List[Dict[str, Any]]:
     if day in ["", "day"]:
         return [{}]
     elif day == "weekday":
@@ -106,11 +106,7 @@ def start_calendar_interval(interval: str) -> Dict[str, Any]:
             block.update(day_dict)
             block.update(timestamp_dict)
             blocks.append(block)
-    if len(blocks) > 1:
-        value = blocks
-    else:
-        value = blocks[0]
-    return {"StartCalendarInterval": value}
+    return {"StartCalendarInterval": blocks if len(blocks) > 1 else blocks[0]}
 
 
 def every(interval: str) -> Dict[str, Any]:

@@ -4,6 +4,7 @@ links.txt
 playground.py
 TODO.txt
 monkeytype.sqlite3
+out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

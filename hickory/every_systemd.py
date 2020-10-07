@@ -1,4 +1,5 @@
 import re
+from typing import List
 
 from .utils import (
     HickoryError,
@@ -8,7 +9,6 @@ from .utils import (
     strip_number,
     timestamp_to_tuple,
 )
-from typing import List
 
 
 def interval_to_on_calendar_strings(interval: str) -> List[str]:

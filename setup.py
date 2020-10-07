@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
@@ -22,8 +22,10 @@ setup(
     author="Max Humber",
     author_email="max.humber@gmail.com",
     license="MIT",
-    packages=["hickory"],
+    packages=find_packages(),
+    package_data={"hickory": ["py.typed"]},
     entry_points={"console_scripts": ["hickory=hickory.cli:main"]},
     python_requires=">=3.6",
     setup_requires=["setuptools>=38.6.0"],
+    zip_safe=False,
 )

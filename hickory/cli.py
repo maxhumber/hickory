@@ -57,7 +57,7 @@ def kill(id_or_script: str) -> None:
         raise OSError("Operating System Not Supported")
 
 
-def status() -> None:
+def status() -> str:
     """Check the status of all scheduled Python scripts
 
     Example:

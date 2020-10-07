@@ -1,7 +1,7 @@
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 
-def _find_maxlens(info_dicts: List[Dict[str, Union[str, int]]]) -> Dict[str, int]:
+def _find_maxlens(info_dicts: List[Dict[str, Any]]) -> Dict[str, int]:
     keys = info_dicts[0].keys()
     maxlens = {key: len(key) for key in keys}
     for info in info_dicts:
@@ -15,7 +15,7 @@ def _find_maxlens(info_dicts: List[Dict[str, Union[str, int]]]) -> Dict[str, int
 
 def _build_strings(
     keys: List[str],
-    info_dicts: List[Dict[str, Union[str, int]]],
+    info_dicts: List[Dict[str, Any]],
     maxlens: Dict[str, int],
     spacer: int = 2,
 ) -> List[str]:
@@ -42,7 +42,7 @@ def _build_terminal_string(
     return terminal_string
 
 
-def format_status(info_dicts: List[Dict[str, Union[str, int]]], spacer: int = 2) -> str:
+def format_status(info_dicts: List[Dict[str, Any]], spacer: int = 2) -> str:
     maxlens = _find_maxlens(info_dicts)
     keys = ["id", "file", "state", "runs", "interval"]
     strings = _build_strings(keys, info_dicts, maxlens, spacer)
