@@ -1,13 +1,14 @@
-from itertools import product
 import re
 import subprocess
+from itertools import product
+from typing import List, Optional, Tuple
 
 
 class HickoryError(Exception):
     pass
 
 
-def run(command, output=True, silent=False):
+def run(command: str, output: bool = True, silent: bool = False) -> Optional[str]:
     if silent:
         command += " --quiet"
     if output:
@@ -18,20 +19,21 @@ def run(command, output=True, silent=False):
         o = s.stdout.decode("utf-8").strip()
         return o
     subprocess.run(command, shell=True)
+    return None
 
 
-def strip_number(s):
+def strip_number(s: str) -> Optional[int]:
     try:
         return int(re.sub("[^0-9]", "", s))
     except ValueError:
         return None
 
 
-def contains_number(string):
+def contains_number(string: str) -> bool:
     return bool(strip_number(string))
 
 
-def interval_to_tuple(interval):
+def interval_to_tuple(interval: str) -> Tuple[int, str]:
     c = re.findall(r"[A-Za-z]+|\d+", interval)
     try:
         value = int(c[0])
@@ -41,7 +43,7 @@ def interval_to_tuple(interval):
     return value, unit
 
 
-def timestamp_to_tuple(t):
+def timestamp_to_tuple(t: str) -> Tuple[int, int]:
     rt = re.findall(r"[A-Za-z]+|\d+", t)
     try:
         hour = int(rt[0])
@@ -71,11 +73,10 @@ def timestamp_to_tuple(t):
         raise HickoryError(f"Invalid time: {t}")
     return hour, minute
 
-
-def disjoin(interval):
+def disjoin(interval: str) -> List[Tuple[str, str]]:
     try:
         days, timestamps = interval.split("@")
     except ValueError:
         raise HickoryError(f"Invalid time: {interval}") from None
-    days, timestamps = days.split(","), timestamps.split(",")
-    return list(product(days, timestamps))
+    list_days, list_timestamps = days.split(","), timestamps.split(",")
+    return list(product(list_days, list_timestamps))

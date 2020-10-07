@@ -4,8 +4,8 @@ from pathlib import Path
 from uuid import uuid4
 
 from .constants import HICKORY_SERVICE
-from .launchd import schedule_launchd, kill_launchd, status_launchd
-from .systemd import schedule_systemd, kill_systemd, status_systemd
+from .launchd import kill_launchd, schedule_launchd, status_launchd
+from .systemd import kill_systemd, schedule_systemd, status_systemd
 
 
 def schedule(script, every):

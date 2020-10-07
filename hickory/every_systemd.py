@@ -2,11 +2,11 @@ import re
 
 from .utils import (
     HickoryError,
-    strip_number,
     contains_number,
-    interval_to_tuple,
-    timestamp_to_tuple,
     disjoin,
+    interval_to_tuple,
+    strip_number,
+    timestamp_to_tuple,
 )
 
 

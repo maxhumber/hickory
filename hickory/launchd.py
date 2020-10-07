@@ -1,6 +1,6 @@
-from pathlib import Path
 import plistlib
 import re
+from pathlib import Path
 
 from .constants import HICKORY_SERVICE, LAUNCHD_PATH
 from .every_launchd import every
