@@ -8,9 +8,10 @@ from .utils import (
     strip_number,
     timestamp_to_tuple,
 )
+from typing import List
 
 
-def interval_to_on_calendar_strings(interval):
+def interval_to_on_calendar_strings(interval: str) -> List[str]:
     value, unit = interval_to_tuple(interval)
     if unit in ["s", "sec", "secs", "second", "seconds"]:
         string = f"*:*:0/{value}"
@@ -23,7 +24,7 @@ def interval_to_on_calendar_strings(interval):
     return [string]
 
 
-def day_to_shorthand(day):
+def day_to_shorthand(day: str) -> str:
     if day in ["m", "mon", "monday"]:
         day_shorthand = "Mon"
     elif day in ["t", "tue", "tues", "tuesday"]:
@@ -43,14 +44,15 @@ def day_to_shorthand(day):
     return day_shorthand
 
 
-def day_to_calendar_day(day):
+def day_to_calendar_day(day: str) -> str:
     number = strip_number(day)
+    assert isinstance(number, int)
     if not (1 <= number <= 31):
         raise HickoryError(f"Invalid calendar day: {day}")
     return f"*-*-{str(number).zfill(2)}"
 
 
-def day_to_on_calendar_string(day):
+def day_to_on_calendar_string(day: str) -> str:
     if day in ["", "day"]:
         return "*-*-*"
     elif day == "weekday":
@@ -63,13 +65,13 @@ def day_to_on_calendar_string(day):
         return day_to_shorthand(day)
 
 
-def timestamp_to_on_calendar_string(t):
+def timestamp_to_on_calendar_string(t: str) -> str:
     hour, minute = timestamp_to_tuple(t)
     string = f"{str(hour).zfill(2)}:{str(minute).zfill(2)}:00"
     return string
 
 
-def datetime_interval_to_on_calendar_strings(interval):
+def datetime_interval_to_on_calendar_strings(interval: str) -> List[str]:
     on_calendar_strings = []
     for day, timestamp in disjoin(interval):
         day = day_to_on_calendar_string(day)
@@ -78,7 +80,7 @@ def datetime_interval_to_on_calendar_strings(interval):
     return on_calendar_strings
 
 
-def every(interval):
+def every(interval: str) -> List[str]:
     interval = str(interval).lower()
     if "@" not in interval:
         return interval_to_on_calendar_strings(interval)

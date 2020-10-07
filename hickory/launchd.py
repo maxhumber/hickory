@@ -6,9 +6,12 @@ from .constants import HICKORY_SERVICE, LAUNCHD_PATH
 from .every_launchd import every
 from .format_status import format_status
 from .utils import run
+from typing import Any, Dict, List, Union
 
 
-def _build_dict(label, working_directory, which_python, script, interval):
+def _build_dict(
+    label: str, working_directory: str, which_python: str, script: str, interval: str
+) -> Dict[str, Any]:
     ldd = {
         "Label": label,
         "WorkingDirectory": working_directory,
@@ -21,7 +24,7 @@ def _build_dict(label, working_directory, which_python, script, interval):
     return ldd
 
 
-def _dump_dict(ldd):
+def _dump_dict(ldd: Dict[str, Any]) -> str:
     path = f"{LAUNCHD_PATH}/{ldd['Label']}.plist"
     with open(f"{path}", "wb") as f:
         plistlib.dump(ldd, f)

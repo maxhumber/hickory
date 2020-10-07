@@ -78,7 +78,7 @@ def eom_list_dict() -> List[Dict[str, int]]:
     return [{"Day": day, "Month": month} for month, day in eom_days]
 
 
-def day_to_list_dict(day: str) -> Union[List[Dict[str, int]], List[Dict[Any, Any]]]:
+def day_to_list_dict(day: str) -> List[Dict[Any, Any]]:
     if day in ["", "day"]:
         return [{}]
     elif day == "weekday":
@@ -96,16 +96,14 @@ def timestamp_to_dict(t: str) -> Dict[str, int]:
     return {"Hour": hour, "Minute": minute}
 
 
-def start_calendar_interval(
-    interval: str,
-) -> Dict[str, Union[List[Dict[str, int]], Dict[str, int]]]:
-    blocks = []
+def start_calendar_interval(interval: str) -> Dict[str, Any]:
+    blocks: List[Dict[str, int]] = []
     for day, timestamp in disjoin(interval):
-        days = day_to_list_dict(day)
+        days_list_dict = day_to_list_dict(day)
         timestamp_dict = timestamp_to_dict(timestamp)
-        for day in days:
-            block = {}
-            block.update(day)
+        for day_dict in days_list_dict:
+            block: Dict[str, int] = {}
+            block.update(day_dict)
             block.update(timestamp_dict)
             blocks.append(block)
     if len(blocks) > 1:
@@ -115,7 +113,7 @@ def start_calendar_interval(
     return {"StartCalendarInterval": value}
 
 
-def every(interval: str) -> Dict[str, Union[int, Dict[str, int]]]:
+def every(interval: str) -> Dict[str, Any]:
     interval = str(interval).lower()
     if "@" not in interval:
         return start_interval(interval)

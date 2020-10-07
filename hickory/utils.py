@@ -73,6 +73,7 @@ def timestamp_to_tuple(t: str) -> Tuple[int, int]:
         raise HickoryError(f"Invalid time: {t}")
     return hour, minute
 
+
 def disjoin(interval: str) -> List[Tuple[str, str]]:
     try:
         days, timestamps = interval.split("@")
