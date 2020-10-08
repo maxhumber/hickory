@@ -50,7 +50,7 @@ def build_timer_string(label: str, interval: str) -> str:
 
 
 def build_service_string(
-    label: str, working_directory: str, which_python: str, script: str
+        label: str, working_directory: str, which_python: str, script: str
 ) -> str:
     config = ConfigParser()
     config.optionxform = str  # type: ignore
@@ -70,7 +70,7 @@ def dump_string(config_string: str, path: str) -> None:
 
 
 def schedule_systemd(
-    label: str, working_directory: str, which_python: str, script: str, interval: str
+        label: str, working_directory: str, which_python: str, script: str, interval: str
 ) -> None:
     service = build_service_string(label, working_directory, which_python, script)
     timer = build_timer_string(label, interval)
@@ -143,8 +143,10 @@ def status_systemd() -> str:
         return "No running scripts..."
 
 
-def kill_systemd(id_or_script: str) -> None:
+def kill_systemd(id_or_script: str) -> bool:
+    is_script_found = False  # Flag to know if the given script exists or not
     for path in Path(SYSTEMD_PATH).glob(f"{HICKORY_SERVICE}*{id_or_script}*"):
+        is_script_found = True
         file = str(path).split("/")[-1]
         if file.endswith("timer"):
             run(f"systemctl --user stop {file}")
@@ -154,3 +156,4 @@ def kill_systemd(id_or_script: str) -> None:
             run(f"rm {path}")
         else:
             continue
+    return is_script_found
