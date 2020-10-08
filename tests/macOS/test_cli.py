@@ -33,6 +33,9 @@ def test_cli_launchd():
     ).stderr.decode()
     assert "foo.py" in status.split("\n")[1]
     time.sleep(5)
-    subprocess.run("hickory kill foo.py", shell=True)
+    kill_status = subprocess.run("hickory kill foo.oy", shell=True, capture_output=True).stdout.decode()
+    assert kill_status.rstrip() == "Kill failed. foo.oy not found."
+    kill_status = subprocess.run("hickory kill foo.py", shell=True, capture_output=True).stdout.decode()
+    assert kill_status.rstrip() == "Killed foo.py"
     assert (Path.cwd() / "hickory.log").exists()
     teardown()
