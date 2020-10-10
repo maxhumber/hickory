@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from .constants import HICKORY_SERVICE, LAUNCHD_PATH
+
 from .every_launchd import every
 from .format_status import format_status
 from .utils import run
