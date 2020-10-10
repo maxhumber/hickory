@@ -6,10 +6,14 @@ from configparser import ConfigParser
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-from .constants import HICKORY_SERVICE, SYSTEMD_PATH
 from .every_systemd import every
 from .format_status import format_status
 from .utils import run
+from decouple import config
+
+SYSTEMD_PATH=config('SYSTEMD_PATH')
+HICKORY_SERVICE=config('HICKORY_SERVICE')
+HOME=config('HOME')
 
 HOME = str(Path.home())
 

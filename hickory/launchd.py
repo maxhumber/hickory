@@ -3,11 +3,16 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from .constants import HICKORY_SERVICE, LAUNCHD_PATH
+
 from .every_launchd import every
 from .format_status import format_status
 from .utils import run
 
+from log import write_log
+from decouple import config
+
+HICKORY_SERVICE=config('HICKORY_SERVICE')
+LAUNCHD_PATH=config('LAUNCHD_PATH')
 
 def _build_dict(
     label: str, working_directory: str, which_python: str, script: str, interval: str
@@ -26,6 +31,7 @@ def _build_dict(
 
 def _dump_dict(launchd_dict: Dict[str, Any]) -> str:
     path = f"{LAUNCHD_PATH}/{launchd_dict['Label']}.plist"
+    write_log('File Dumped !')
     with open(f"{path}", "wb") as f:
         plistlib.dump(launchd_dict, f)
     return path
@@ -67,8 +73,10 @@ def status_launchd() -> str:
     info_dicts = [_service_info(path) for path in paths]
     if info_dicts:
         status = format_status(info_dicts)
+        write_log(status)
         return status
     else:
+        write_log("No running scripts...")
         return "No running scripts..."
 
 
