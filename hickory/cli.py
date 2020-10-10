@@ -3,10 +3,14 @@ import sys
 from pathlib import Path
 from uuid import uuid4
 
-from .constants import HICKORY_SERVICE
 from .launchd import kill_launchd, schedule_launchd, status_launchd
 from .systemd import kill_systemd, schedule_systemd, status_systemd
 
+from log import write_log
+from decouple import config
+
+
+HICKORY_SERVICE = config('HICKORY_SERVICE')
 
 def schedule(script: str, every: str) -> None:
     """Schedule a Python script to repeat <every>
@@ -22,6 +26,7 @@ def schedule(script: str, every: str) -> None:
     ```
     """
     if not Path(script).exists():
+        write_log('FileNotFoundError ',script)
         raise FileNotFoundError(script)
 
     id = uuid4().hex[:6]
@@ -31,9 +36,12 @@ def schedule(script: str, every: str) -> None:
 
     if sys.platform == "darwin":
         schedule_launchd(label, working_directory, which_python, script, every)
+        write_log('Sys Platform - Darwin')
     elif sys.platform == "linux":
         schedule_systemd(label, working_directory, which_python, script, every)
+        write_log('Sys Platform - Linux')
     else:
+        write_log("Operating System Not Supported")
         raise OSError("Operating System Not Supported")
 
 
@@ -50,10 +58,13 @@ def kill(id_or_script: str) -> None:
     ```
     """
     if sys.platform == "darwin":
+        write_log('Killed darwin')
         kill_launchd(id_or_script)
     elif sys.platform == "linux":
+        write_log('Killed linux')
         kill_systemd(id_or_script)
     else:
+        write_log('Operating System Not Supported')
         raise OSError("Operating System Not Supported")
 
 
@@ -81,11 +92,13 @@ def main():
     args = parser.parse_args()
     if args.function == "schedule" and args.script and args.every:
         schedule(args.script, args.every)
+        write_log(f"Scheduled {args.script}")
         print(f"Scheduled {args.script}")
     if args.function == "status":
         return status()
     if args.function == "kill" and args.script:
         kill(args.script)
+        write_log(f"Killed {args.script}")
         print(f"Killed {args.script}")
 
 
