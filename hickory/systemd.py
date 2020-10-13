@@ -50,7 +50,7 @@ def build_timer_string(label: str, interval: str) -> str:
 
 
 def build_service_string(
-        label: str, working_directory: str, which_python: str, script: str
+    label: str, working_directory: str, which_python: str, script: str
 ) -> str:
     config = ConfigParser()
     config.optionxform = str  # type: ignore
@@ -70,7 +70,7 @@ def dump_string(config_string: str, path: str) -> None:
 
 
 def schedule_systemd(
-        label: str, working_directory: str, which_python: str, script: str, interval: str
+    label: str, working_directory: str, which_python: str, script: str, interval: str
 ) -> None:
     service = build_service_string(label, working_directory, which_python, script)
     timer = build_timer_string(label, interval)

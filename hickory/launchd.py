@@ -10,7 +10,7 @@ from .utils import run
 
 
 def _build_dict(
-        label: str, working_directory: str, which_python: str, script: str, interval: str
+    label: str, working_directory: str, which_python: str, script: str, interval: str
 ) -> Dict[str, Any]:
     launchd_dict = {
         "Label": label,
@@ -53,7 +53,7 @@ def _service_info(path: Path) -> Dict[str, Any]:
 
 
 def schedule_launchd(
-        label: str, working_directory: str, which_python: str, script: str, interval: str
+    label: str, working_directory: str, which_python: str, script: str, interval: str
 ) -> None:
     launchd_dict = _build_dict(label, working_directory, which_python, script, interval)
     path = _dump_dict(launchd_dict)
