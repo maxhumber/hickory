@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Union
 
 
 class Color:
@@ -31,14 +31,19 @@ class Color:
             return Color(*self.codes, *other.codes)
         return other + str(self)
 
-    def __call__(self, text: str) -> str:
+    def __call__(self, item: Union[str, 'Color']) -> Union[str, 'Color']:
+        if isinstance(item, self.__class__):
+            return self + item
+        return self.colorize(item)
+
+    def colorize(self, text: str) -> str:
         return str(self) + text + '\033[m'
 
-    def __rmatmul__(self, text: str) -> str:
-        return self(text)
+    def __rmatmul__(self, item):
+        return self(item)
 
-    def __matmul__(self, text: str) -> str:
-        return self(text)
+    def __matmul__(self, item):
+        return self(item)
 
     def __repr__(self):
         return f'{self.__class__.__name__}(codes={self.codes})'
