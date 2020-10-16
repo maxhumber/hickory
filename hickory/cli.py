@@ -93,7 +93,7 @@ def main():
             return status()
         if args.function == "kill" and args.script:
             kill(args.script)
-            print(f"{Fore.GREEN}%s{Fore.RESET}" % f"Killed {args.script}")
+            print(Fore.GREEN @ f"Killed {args.script}")
 
     except Exception as e:
         pretty_print_exception(e)

@@ -3,6 +3,21 @@ from typing import Tuple
 
 class Color:
 
+    """
+    A composable coloring object.
+
+    RED = Color(91)
+    RED_FOREGROUND = RED
+    BLUE_BACKGROUND = Color(104)
+
+    # Sum Colors to combine them:
+    RED_FORE_BLUE_BACK = RED_FOREGROUND + BLUE_BACKGROUND
+
+    # Apply it to strings about to be printed
+    print(RED @ 'text') will color the text in red, and reset the color afterwards;
+    print(f'{RED}text{RESET}') doing it this way requires you to reset the color yourself.
+    """
+
     codes: Tuple[int, ...]
 
     def __init__(self, *codes: int):
@@ -16,8 +31,22 @@ class Color:
             return Color(*self.codes, *other.codes)
         return other + str(self)
 
-    def __call__(self, i):
-        return str(self) + i + '\033[0m'
+    def __call__(self, text: str) -> str:
+        return str(self) + text + '\033[m'
+
+    def __rmatmul__(self, text: str) -> str:
+        return self(text)
+
+    def __matmul__(self, text: str) -> str:
+        return self(text)
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(codes={self.codes})'
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.codes == other.codes
+        return False
 
 
 class Fore:
@@ -46,11 +75,3 @@ class Style:
 
 
 RESET_ALL = Color()
-
-
-if __name__ == "__main__":
-    # import sys
-    # __module__ = sys.modules[__name__]
-    # print('a' @ __module__.Y_BOLD)
-    print(f'{Fore.RED}%s{Fore.RESET}')
-    print(Fore.RED('a'))
