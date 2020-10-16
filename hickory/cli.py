@@ -2,15 +2,16 @@ import argparse
 import sys
 from pathlib import Path
 from uuid import uuid4
-import traceback
 
-from colorama import Fore, Style, init as init_colorama
-init_colorama()
+from colorama import Fore, init as init_colorama
 
 from .constants import HICKORY_SERVICE
 from .launchd import kill_launchd, schedule_launchd, status_launchd
 from .systemd import kill_systemd, schedule_systemd, status_systemd
-from .utils import HickoryError
+from .utils import pretty_print_exception
+
+
+init_colorama()
 
 
 def schedule(script: str, every: str) -> None:
@@ -86,7 +87,7 @@ def main():
     parser.add_argument("-e", "--every", nargs="?")
 
     args = parser.parse_args()
-        
+
     try:
         if args.function == "schedule" and args.script and args.every:
             schedule(args.script, args.every)
@@ -98,15 +99,7 @@ def main():
             print(f"{Fore.LIGHTGREEN_EX}%s{Fore.RESET}" % f"Killed {args.script}")
 
     except Exception as e:
-        msg, *args = e.args
-        if not isinstance(e, (OSError, FileNotFoundError, HickoryError)):
-            print(*traceback.format_exc().split('\n')[:-2], sep='\n')
-        print(
-            f"{Fore.LIGHTRED_EX}[{Style.BRIGHT}%s{Style.NORMAL}] %s%s{Fore.RESET}" % (
-                type(e).__name__, msg, args and f': {str(args).strip("[]")}' or ''
-            ),
-            file=sys.stderr
-        )
+        pretty_print_exception(e)
         exit(1)
 
 
