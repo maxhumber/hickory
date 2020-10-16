@@ -4,7 +4,7 @@ import traceback
 import subprocess
 from itertools import product
 from typing import List, Optional, Tuple, Type
-from colorama import Fore, Style
+from .colors import Fore, Style
 
 
 class HickoryError(Exception):
@@ -95,7 +95,7 @@ def pretty_print_exception(
     if not isinstance(e, eligible):
         print(*traceback.format_exc().split('\n')[:-2], sep='\n', file=sys.stderr)
     print(
-        f"{Fore.LIGHTRED_EX}[{Style.BRIGHT}%s{Style.NORMAL}] %s%s{Fore.RESET}" % (
+        f"{Fore.RED}[{Style.BRIGHT}%s{Style.RESET}] %s%s{Fore.RESET}" % (
             type(e).__name__, msg, args and f': {str(args).strip("[]")}' or ''
         ),
         file=sys.stderr

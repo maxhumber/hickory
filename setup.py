@@ -27,6 +27,5 @@ setup(
     entry_points={"console_scripts": ["hickory=hickory.cli:main"]},
     python_requires=">=3.6",
     setup_requires=["setuptools>=38.6.0"],
-    install_requires=["colorama"],
-    zip_safe=False,
+    zip_safe=False
 )

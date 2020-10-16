@@ -3,15 +3,12 @@ import sys
 from pathlib import Path
 from uuid import uuid4
 
-from colorama import Fore, init as init_colorama
+from .colors import Fore
 
 from .constants import HICKORY_SERVICE
 from .launchd import kill_launchd, schedule_launchd, status_launchd
 from .systemd import kill_systemd, schedule_systemd, status_systemd
 from .utils import pretty_print_exception
-
-
-init_colorama()
 
 
 def schedule(script: str, every: str) -> None:
@@ -91,12 +88,12 @@ def main():
     try:
         if args.function == "schedule" and args.script and args.every:
             schedule(args.script, args.every)
-            print(f"{Fore.LIGHTGREEN_EX}%s{Fore.RESET}" % f"Scheduled {args.script}")
+            print(f"{Fore.GREEN}%s{Fore.RESET}" % f"Scheduled {args.script}")
         if args.function == "status":
             return status()
         if args.function == "kill" and args.script:
             kill(args.script)
-            print(f"{Fore.LIGHTGREEN_EX}%s{Fore.RESET}" % f"Killed {args.script}")
+            print(f"{Fore.GREEN}%s{Fore.RESET}" % f"Killed {args.script}")
 
     except Exception as e:
         pretty_print_exception(e)
