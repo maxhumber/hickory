@@ -19,7 +19,7 @@ class Color:
     >>> print(f'{RED}text{RESET}') doing it this way requires you to reset the color yourself;
     >>> print(RED_FG @ BLUE_BG @ 'text') Combine them on the spot;
 
-    See more examples in test_color.py.
+    See more examples in test_colors.py.
 
     Most color aliases can be found as consts in Fore & Back.
 
