@@ -20,6 +20,7 @@ def test_color_matmul():
 
 def test_color_compose():
     assert Color(93) @ Color(102) @ 'allo' == '\033[93;102mallo\033[m'
+    assert 'allo' @ Color(93) @ Color(102) == '\033[102m\033[93mallo\033[m\033[m'
 
 
 def test_color_add():
