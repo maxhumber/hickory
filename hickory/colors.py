@@ -21,7 +21,7 @@ class Color:
 
     See more examples in test_color.py.
 
-    Most color aliases can already found as consts in this module, + in Fore & Back.
+    Most color aliases can be found as consts in Fore & Back.
 
     """
 
