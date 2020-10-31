@@ -40,7 +40,7 @@ def schedule(script: str, every: str) -> None:
         raise OSError("Operating System Not Supported", sys.platform)
 
 
-def kill(id_or_script: str) -> None:
+def kill(id_or_script: str) -> bool:
     """Stop and delete a schedule for a Python script
 
     Params:
@@ -53,9 +53,9 @@ def kill(id_or_script: str) -> None:
     ```
     """
     if sys.platform == "darwin":
-        kill_launchd(id_or_script)
+        return kill_launchd(id_or_script)
     elif sys.platform == "linux":
-        kill_systemd(id_or_script)
+        return kill_systemd(id_or_script)
     else:
         raise OSError("Operating System Not Supported", sys.platform)
 
@@ -84,7 +84,6 @@ def main():
     parser.add_argument("-e", "--every", nargs="?")
 
     args = parser.parse_args()
-
     try:
         if args.function == "schedule" and args.script and args.every:
             schedule(args.script, args.every)

@@ -143,8 +143,10 @@ def status_systemd() -> str:
         return "No running scripts..."
 
 
-def kill_systemd(id_or_script: str) -> None:
+def kill_systemd(id_or_script: str) -> bool:
+    is_script_found = False  # Flag to know if the given script exists or not
     for path in Path(SYSTEMD_PATH).glob(f"{HICKORY_SERVICE}*{id_or_script}*"):
+        is_script_found = True
         file = str(path).split("/")[-1]
         if file.endswith("timer"):
             run(f"systemctl --user stop {file}")
@@ -154,3 +156,4 @@ def kill_systemd(id_or_script: str) -> None:
             run(f"rm {path}")
         else:
             continue
+    return is_script_found

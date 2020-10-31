@@ -39,5 +39,12 @@ def test_cli_systemd():
         capture_output=True,
     )
     assert int(lines.stdout.decode()) > 0
-    subprocess.run("hickory kill foo.py", shell=True)
+    kill_status = subprocess.run(
+        "hickory kill foo.oy", shell=True, capture_output=True
+    ).stdout.decode()
+    assert kill_status.rstrip() == "Kill failed. foo.oy not found."
+    kill_status = subprocess.run(
+        "hickory kill foo.py", shell=True, capture_output=True
+    ).stdout.decode()
+    assert kill_status.rstrip() == "Killed foo.py"
     teardown()

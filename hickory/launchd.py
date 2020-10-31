@@ -72,7 +72,10 @@ def status_launchd() -> str:
         return "No running scripts..."
 
 
-def kill_launchd(id_or_script: str) -> None:
+def kill_launchd(id_or_script: str) -> bool:
+    is_script_found = False  # Flag to know if the given script exists or not
     for file in Path(LAUNCHD_PATH).glob(f"{HICKORY_SERVICE}*{id_or_script}*"):
+        is_script_found = True
         run(f"launchctl unload {file}")
         run(f"rm {file}")
+    return is_script_found
