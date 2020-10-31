@@ -3,9 +3,12 @@ import sys
 from pathlib import Path
 from uuid import uuid4
 
+from .colors import Fore
+
 from .constants import HICKORY_SERVICE
 from .launchd import kill_launchd, schedule_launchd, status_launchd
 from .systemd import kill_systemd, schedule_systemd, status_systemd
+from .utils import pretty_print_exception
 
 
 def schedule(script: str, every: str) -> None:
@@ -34,7 +37,7 @@ def schedule(script: str, every: str) -> None:
     elif sys.platform == "linux":
         schedule_systemd(label, working_directory, which_python, script, every)
     else:
-        raise OSError("Operating System Not Supported")
+        raise OSError("Operating System Not Supported", sys.platform)
 
 
 def kill(id_or_script: str) -> None:
@@ -54,7 +57,7 @@ def kill(id_or_script: str) -> None:
     elif sys.platform == "linux":
         kill_systemd(id_or_script)
     else:
-        raise OSError("Operating System Not Supported")
+        raise OSError("Operating System Not Supported", sys.platform)
 
 
 def status() -> str:
@@ -70,23 +73,31 @@ def status() -> str:
     elif sys.platform == "linux":
         return status_systemd()
     else:
-        raise OSError("Operating System Not Supported")
+        raise OSError("Operating System Not Supported", sys.platform)
 
 
 def main():
+
     parser = argparse.ArgumentParser()
     parser.add_argument("function", choices=("schedule", "status", "kill"))
     parser.add_argument("script", nargs="?")
     parser.add_argument("-e", "--every", nargs="?")
+
     args = parser.parse_args()
-    if args.function == "schedule" and args.script and args.every:
-        schedule(args.script, args.every)
-        print(f"Scheduled {args.script}")
-    if args.function == "status":
-        return status()
-    if args.function == "kill" and args.script:
-        kill(args.script)
-        print(f"Killed {args.script}")
+
+    try:
+        if args.function == "schedule" and args.script and args.every:
+            schedule(args.script, args.every)
+            print(f"{Fore.GREEN}%s{Fore.RESET}" % f"Scheduled {args.script}")
+        if args.function == "status":
+            return status()
+        if args.function == "kill" and args.script:
+            kill(args.script)
+            print(Fore.GREEN @ f"Killed {args.script}")
+
+    except Exception as e:
+        pretty_print_exception(e)
+        exit(1)
 
 
 if __name__ == "__main__":

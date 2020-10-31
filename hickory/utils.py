@@ -1,7 +1,10 @@
 import re
+import sys
+import traceback
 import subprocess
 from itertools import product
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Type
+from .colors import Fore, Style
 
 
 class HickoryError(Exception):
@@ -81,3 +84,19 @@ def disjoin(interval: str) -> List[Tuple[str, str]]:
         raise HickoryError(f"Invalid time: {interval}") from None
     list_days, list_timestamps = days.split(","), timestamps.split(",")
     return list(product(list_days, list_timestamps))
+
+
+def pretty_print_exception(
+    e: Exception,
+    eligible: Tuple[Type[Exception], ...] = (OSError, FileNotFoundError, HickoryError)
+):
+    """Print colored exception type/message and hide the traceback if exception is deemed to be explicit enough as is."""
+    msg, *args = e.args
+    if not isinstance(e, eligible):
+        print(*traceback.format_exc().split('\n')[:-2], sep='\n', file=sys.stderr)
+    print(
+        f"{Fore.RED}[{Style.BRIGHT}%s{Style.RESET}] %s%s{Fore.RESET}" % (
+            type(e).__name__, msg, args and f': {str(args).strip("[]")}' or ''
+        ),
+        file=sys.stderr
+    )

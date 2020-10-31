@@ -27,5 +27,5 @@ setup(
     entry_points={"console_scripts": ["hickory=hickory.cli:main"]},
     python_requires=">=3.6",
     setup_requires=["setuptools>=38.6.0"],
-    zip_safe=False,
+    zip_safe=False
 )
